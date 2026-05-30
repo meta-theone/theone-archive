@@ -1,0 +1,60 @@
+# ===========================================================
+# 더원 자료실 → 잔디 수동 알림
+# 위치: .github/workflows/jandi-notify.yml
+# 동작:
+#   - 자동(push) 알림 ❌ — 깃허브에 올려도 잔디로 안 감 (조용)
+#   - 필요할 때만 수동 실행(workflow_dispatch)으로 잔디 발송
+#   - 제목 / 내용 / 링크를 직접 입력해서 발송
+# 실행 방법:
+#   1) GitHub 웹/모바일앱 → Actions → 이 워크플로 → "Run workflow"
+#   2) PC 명령어: gh workflow run jandi-notify.yml -R meta-theone/theone-archive -f title="..." -f message="..."
+# ===========================================================
+
+name: Jandi Notification (Manual)
+
+on:
+  workflow_dispatch:
+    inputs:
+      title:
+        description: '잔디 알림 제목'
+        required: true
+        default: '더원 자료실 업데이트'
+      message:
+        description: '잔디 알림 내용'
+        required: true
+        default: '새 자료가 자료실에 올라왔습니다.'
+      link:
+        description: '링크 (비우면 자료실 홈)'
+        required: false
+        default: 'https://meta-theone.github.io/theone-archive/'
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send to Jandi
+        env:
+          JANDI_TITLE: ${{ inputs.title }}
+          JANDI_DESC: ${{ inputs.message }}
+          LINK: ${{ inputs.link }}
+          WEBHOOK: ${{ secrets.JANDI_WEBHOOK_URL }}
+        run: |
+          if [ -z "$WEBHOOK" ]; then
+            echo "::error::JANDI_WEBHOOK_URL 시크릿이 설정되어 있지 않습니다."
+            exit 1
+          fi
+          PAYLOAD=$(jq -n \
+            --arg title "$JANDI_TITLE" \
+            --arg desc "$JANDI_DESC" \
+            --arg link "$LINK" \
+            '{
+              body: ("📢 더원 자료실 안내\n\n👉 " + $link),
+              connectColor: "#B8902F",
+              connectInfo: [{title: $title, description: $desc}]
+            }')
+          curl -sS -X POST "$WEBHOOK" \
+            -H "Accept: application/vnd.tosslab.jandi-v2+json" \
+            -H "Content-Type: application/json" \
+            -d "$PAYLOAD"
+          echo ""
+          echo "✅ 잔디 발송 완료: $JANDI_TITLE"
