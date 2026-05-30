@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="더원사업단 CA 배포용 교육·영업 자료실" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>더원사업단 자료실</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --charcoal: #1f2430;
+      --charcoal-2: #2a313f;
+      --gold: #c9a24b;
+      --gold-soft: #e3c987;
+      --ink: #1a1d24;
+      --paper: #f5f6f8;
+      --line: #e4e7ec;
+      --muted: #6b7280;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--paper);
+      color: var(--ink);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    .wrap { max-width: 960px; margin: 0 auto; padding: 0 20px; }
+
+    /* Header */
+    header {
+      background: linear-gradient(135deg, var(--charcoal) 0%, var(--charcoal-2) 100%);
+      color: #fff;
+      padding: 56px 0 48px;
+      text-align: center;
+      position: relative;
+    }
+    header::after {
+      content: "";
+      position: absolute; left: 50%; bottom: 0;
+      transform: translateX(-50%);
+      width: 64px; height: 4px;
+      background: var(--gold);
+      border-radius: 2px;
+    }
+    .brand-tag {
+      display: inline-block;
+      font-size: 13px; letter-spacing: 3px;
+      color: var(--gold-soft);
+      font-weight: 500;
+      margin-bottom: 12px;
+    }
+    header h1 { font-size: 32px; font-weight: 900; letter-spacing: -0.5px; }
+    header p { margin-top: 10px; color: #c7cdd6; font-size: 15px; }
+
+    /* Main */
+    main { padding: 44px 0 80px; }
+    .section-title {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 20px; font-weight: 700;
+      margin: 8px 0 22px;
+    }
+    .section-title::before {
+      content: ""; width: 4px; height: 20px;
+      background: var(--gold); border-radius: 2px;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 18px;
+    }
+    .card {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 22px 22px 20px;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+      transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+    }
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 28px rgba(31,36,48,.12);
+      border-color: var(--gold);
+    }
+    .card .ico { font-size: 28px; }
+    .card h3 { font-size: 17px; font-weight: 700; margin: 12px 0 6px; }
+    .card p { font-size: 14px; color: var(--muted); }
+    .card .badge {
+      display: inline-block; margin-top: 14px;
+      font-size: 12px; font-weight: 700; letter-spacing: .5px;
+      color: var(--gold);
+    }
+
+    .empty {
+      background: #fff; border: 1px dashed var(--line);
+      border-radius: 14px; padding: 40px 20px; text-align: center;
+      color: var(--muted); font-size: 15px;
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--line);
+      padding: 26px 0;
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    footer strong { color: var(--charcoal); }
+
+    @media (max-width: 600px) {
+      header { padding: 44px 0 38px; }
+      header h1 { font-size: 26px; }
+      .cards { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <span class="brand-tag">THE ONE</span>
+      <h1>더원사업단 자료실</h1>
+      <p>CA 배포용 교육 · 영업 · 상품 자료를 한곳에서</p>
+    </div>
+  </header>
+
+  <main>
+    <div class="wrap">
+      <h2 class="section-title">자료 카테고리</h2>
+      <div class="cards">
+        <a class="card" href="./materials/education/">
+          <div class="ico">📚</div>
+          <h3>교육 자료</h3>
+          <p>상품 교육, 컴플라이언스, 신입 온보딩 자료</p>
+          <span class="badge">바로가기 →</span>
+        </a>
+        <a class="card" href="./materials/sales/">
+          <div class="ico">📈</div>
+          <h3>영업 자료</h3>
+          <p>화법, 세일즈 스크립트, 고객 응대 가이드</p>
+          <span class="badge">바로가기 →</span>
+        </a>
+        <a class="card" href="./materials/products/">
+          <div class="ico">🛡️</div>
+          <h3>상품 자료</h3>
+          <p>상품 요약, 비교표, 설계 제안서 템플릿</p>
+          <span class="badge">바로가기 →</span>
+        </a>
+        <a class="card" href="./materials/incentives/">
+          <div class="ico">🎯</div>
+          <h3>시책 · 시상</h3>
+          <p>이달의 시책, 시상 안내, 캠페인 공지</p>
+          <span class="badge">바로가기 →</span>
+        </a>
+      </div>
+
+      <h2 class="section-title" style="margin-top:44px;">최근 발행 자료</h2>
+      <div class="empty">
+        아직 발행된 자료가 없습니다. 첫 자료를 올리면 이곳에 표시됩니다.
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <strong>더원사업단</strong> · CA 배포용 자료실<br />
+      본 자료실은 내부 위촉설계사 배포 목적입니다.
+    </div>
+  </footer>
+</body>
+</html>

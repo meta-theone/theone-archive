@@ -1,0 +1,16 @@
+# OS / 편집기
+.DS_Store
+Thumbs.db
+desktop.ini
+*~
+
+# 임시 파일
+*.tmp
+*.log
+~$*
+
+# 민감 파일 (실수 방지)
+*.key
+*.pem
+secrets.*
+.env
