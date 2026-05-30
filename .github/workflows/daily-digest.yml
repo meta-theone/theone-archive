@@ -1,0 +1,96 @@
+# ===========================================================
+# 더원 자료실 → 잔디 "하루 자료 모음" 공지
+# 위치: .github/workflows/daily-digest.yml
+# 동작:
+#   - 최근 N시간(기본 24h) 동안의 '발행성' 커밋을 모아 한 번에 공지
+#   - fix/docs/chore 등 정비 커밋, 잔디/워크플로 관련 커밋은 자동 제외
+#   - 모을 자료가 0건이면 발송 생략 (빈 공지 방지)
+# 트리거:
+#   1) 수동: Actions → "Jandi Daily Digest" → Run workflow (시간 범위 입력 가능)
+#      또는 PC: gh workflow run daily-digest.yml -R meta-theone/theone-archive
+#   2) 자동: 매일 18:00 KST (09:00 UTC)  ← cron 시각은 아래 schedule에서 변경
+# ===========================================================
+
+name: Jandi Daily Digest
+
+on:
+  workflow_dispatch:
+    inputs:
+      hours:
+        description: '몇 시간 이내 올라온 자료를 모을지 (기본 24)'
+        required: false
+        default: '24'
+      header:
+        description: '공지 제목 (기본: 오늘의 자료)'
+        required: false
+        default: '오늘의 자료'
+  schedule:
+    # 매일 18:00 KST = 09:00 UTC  (시각 바꾸려면 이 줄 수정)
+    - cron: '0 9 * * *'
+
+jobs:
+  digest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout (full history)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Build & send daily digest
+        env:
+          WEBHOOK: ${{ secrets.JANDI_WEBHOOK_URL }}
+          HOURS: ${{ github.event.inputs.hours || '24' }}
+          HEADER: ${{ github.event.inputs.header || '오늘의 자료' }}
+        run: |
+          set -e
+          if [ -z "$WEBHOOK" ]; then
+            echo "::error::JANDI_WEBHOOK_URL 시크릿이 없습니다."
+            exit 1
+          fi
+
+          # 사이트 URL 자동 구성 (owner/name → https://owner.github.io/name/)
+          OWNER="${GITHUB_REPOSITORY%/*}"
+          NAME="${GITHUB_REPOSITORY#*/}"
+          SITE="https://${OWNER}.github.io/${NAME}/"
+
+          SINCE=$(date -u -d "${HOURS} hours ago" '+%Y-%m-%dT%H:%M:%S')
+
+          # 발행성 커밋만 추출
+          #  - merge 제외
+          #  - conventional 잡음 prefix 제외(fix/docs/chore/refactor/style/test/ci/build/perf)
+          #  - 운영/정비성 키워드 제외(잔디/워크플로/거버넌스/README/LICENSE/.gitignore)
+          ITEMS=$(git log --since="$SINCE" --no-merges --pretty=format:'%s' \
+            | grep -vE '^(fix|docs|chore|refactor|style|test|ci|build|perf)(\(|:|!| )' \
+            | grep -viE '(잔디|워크플로|workflow|거버넌스|README|LICENSE|\.gitignore|gh-pages)' \
+            | sed -E 's/^[[:space:]]+//; s/[[:space:]]+$//' \
+            | awk 'NF' )
+
+          COUNT=$(printf '%s\n' "$ITEMS" | awk 'NF' | wc -l | tr -d ' ')
+          if [ "$COUNT" -eq 0 ]; then
+            echo "최근 ${HOURS}시간 내 발행 자료 없음 → 발송 생략."
+            exit 0
+          fi
+
+          # 최대 15건까지 표시, 초과분은 '외 N건'
+          SHOWN=$(printf '%s\n' "$ITEMS" | head -15 | sed 's/^/• /')
+          EXTRA=$((COUNT - 15))
+          if [ "$EXTRA" -gt 0 ]; then
+            SHOWN="${SHOWN}"$'\n'"…외 ${EXTRA}건"
+          fi
+
+          DATE=$(TZ='Asia/Seoul' date '+%Y-%m-%d (%a)')
+          TITLE="📚 [더원사업단] ${HEADER} (${COUNT}건)"
+          DESC=$(printf "%s\n\n👉 %s" "$SHOWN" "$SITE")
+
+          PAYLOAD=$(jq -n --arg title "$TITLE" --arg desc "$DESC" --arg date "$DATE" \
+            '{ body: ("📚 " + $date + " 자료 모음"),
+               connectColor: "#B8902F",
+               connectInfo: [{title: $title, description: $desc}] }')
+
+          curl -sS -X POST "$WEBHOOK" \
+            -H "Accept: application/vnd.tosslab.jandi-v2+json" \
+            -H "Content-Type: application/json" \
+            -d "$PAYLOAD"
+          echo ""
+          echo "✅ 발송 완료: ${COUNT}건"
