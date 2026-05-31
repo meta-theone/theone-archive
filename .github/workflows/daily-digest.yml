@@ -8,7 +8,7 @@
 # 트리거:
 #   1) 수동: Actions → "Jandi Daily Digest" → Run workflow (시간 범위 입력 가능)
 #      또는 PC: gh workflow run daily-digest.yml -R meta-theone/theone-archive
-#   2) 자동: 매일 18:00 KST (09:00 UTC)  ← cron 시각은 아래 schedule에서 변경
+#   2) 자동: 매일 08:40 KST (전날 23:40 UTC)  ← cron 시각은 아래 schedule에서 변경
 # ===========================================================
 
 name: Jandi Daily Digest
@@ -25,8 +25,8 @@ on:
         required: false
         default: '오늘의 자료'
   schedule:
-    # 매일 18:00 KST = 09:00 UTC  (시각 바꾸려면 이 줄 수정)
-    - cron: '0 9 * * *'
+    # 매일 08:40 KST = 전날 23:40 UTC  (시각 바꾸려면 이 줄 수정)
+    - cron: '40 23 * * *'
 
 jobs:
   digest:
