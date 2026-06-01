@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>정산 센터 사용 가이드 · 더원사업단 자료실</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet" />
+  <style>
+    :root{
+      --charcoal:#1f2430;--gold:#c9a24b;--gold-soft:#f4e2b4;
+      --paper:#f5f6f8;--line:#e4e7ec;--muted:#6b7280;
+      --ink:#1a1d24;--blue:#1d4ed8;--red:#b91c1c;--green:#166534;
+    }
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:'Noto Sans KR',sans-serif;background:var(--paper);color:var(--ink);line-height:1.7;font-size:15px;}
+    .wrap{max-width:960px;margin:0 auto;padding:0 20px;}
+
+    header{background:var(--charcoal);color:#fff;padding:40px 0 50px;}
+    header .back{color:var(--gold);text-decoration:none;font-size:13px;font-weight:700;}
+    header .back:hover{text-decoration:underline;}
+    header h1{font-size:30px;font-weight:900;margin-top:12px;letter-spacing:-.5px;}
+    header h1 .badge{display:inline-block;background:var(--gold);color:var(--charcoal);font-size:13px;font-weight:900;padding:4px 10px;border-radius:999px;vertical-align:middle;margin-left:8px;}
+    header p.lead{color:#c7cdd6;font-size:15px;margin-top:8px;}
+    header .meta{margin-top:18px;display:flex;gap:14px;flex-wrap:wrap;color:#c7cdd6;font-size:12px;}
+    header .meta span{padding:4px 10px;background:rgba(255,255,255,.08);border-radius:999px;}
+
+    .toc{background:#fff;border:1px solid var(--line);border-radius:14px;padding:22px 24px;margin:30px 0;box-shadow:0 4px 14px rgba(0,0,0,.04);}
+    .toc h2{font-size:15px;font-weight:900;color:var(--charcoal);margin-bottom:12px;}
+    .toc ol{padding-left:20px;}
+    .toc ol li{margin:6px 0;font-size:14px;}
+    .toc ol li a{color:var(--ink);text-decoration:none;}
+    .toc ol li a:hover{color:var(--gold);text-decoration:underline;}
+
+    main{padding:0 0 80px;}
+
+    section.chapter{background:#fff;border:1px solid var(--line);border-radius:14px;padding:28px 30px;margin:24px 0;box-shadow:0 4px 14px rgba(0,0,0,.04);}
+    section.chapter h2{font-size:21px;font-weight:900;color:var(--charcoal);padding-bottom:12px;border-bottom:3px solid var(--gold);margin-bottom:18px;letter-spacing:-.3px;}
+    section.chapter h2 .num{display:inline-block;background:var(--charcoal);color:var(--gold);font-size:13px;font-weight:900;padding:4px 10px;border-radius:6px;margin-right:10px;}
+    section.chapter h3{font-size:17px;font-weight:900;color:var(--charcoal);margin:24px 0 10px;}
+    section.chapter h4{font-size:15px;font-weight:700;color:var(--ink);margin:18px 0 8px;}
+    section.chapter p{margin:10px 0;color:var(--ink);}
+    section.chapter ul, section.chapter ol{padding-left:22px;margin:10px 0;}
+    section.chapter ul li, section.chapter ol li{margin:6px 0;}
+
+    code{background:#f0f1f4;padding:2px 7px;border-radius:5px;font-family:'Consolas','Monaco',monospace;font-size:13px;color:#5d3c00;}
+    pre{background:var(--charcoal);color:#e7ecf3;padding:16px 18px;border-radius:10px;overflow-x:auto;font-family:'Consolas','Monaco',monospace;font-size:13px;line-height:1.55;margin:12px 0;}
+    pre code{background:transparent;color:inherit;padding:0;font-size:inherit;}
+
+    .callout{padding:14px 18px;border-radius:10px;margin:14px 0;font-size:14px;line-height:1.6;}
+    .callout b{font-weight:900;}
+    .callout.gold{background:#fff8e5;border:1px solid var(--gold);color:#5d3c00;}
+    .callout.red{background:#fef2f2;border:1px solid #fecaca;color:var(--red);}
+    .callout.blue{background:#eff6ff;border:1px solid #bfdbfe;color:var(--blue);}
+    .callout.gray{background:#f8fafc;border:1px solid var(--line);color:var(--ink);}
+
+    table{width:100%;border-collapse:collapse;margin:14px 0;font-size:13.5px;}
+    th{background:var(--charcoal);color:var(--gold);padding:10px 12px;text-align:left;font-weight:700;}
+    td{padding:10px 12px;border-bottom:1px solid var(--line);}
+    tr:hover td{background:#fafbfd;}
+    table.mono td:not(:first-child){font-family:'Consolas','Monaco',monospace;font-size:12.5px;}
+
+    .step{display:flex;gap:14px;margin:14px 0;align-items:flex-start;}
+    .step-num{flex:0 0 36px;height:36px;border-radius:50%;background:var(--gold);color:var(--charcoal);font-weight:900;display:flex;align-items:center;justify-content:center;font-size:14px;}
+    .step-body{flex:1;}
+    .step-body b{font-weight:900;}
+
+    .tab-card{border:1px solid var(--line);border-radius:12px;padding:20px 22px;margin:14px 0;background:#fafbfd;}
+    .tab-card h3{display:flex;align-items:center;gap:10px;margin-top:0;}
+    .tab-card .tag{display:inline-block;background:var(--charcoal);color:var(--gold);font-size:11px;font-weight:700;padding:3px 8px;border-radius:999px;}
+
+    .kbd{display:inline-block;background:#fff;border:1px solid var(--line);border-bottom:2px solid var(--line);padding:1px 7px;border-radius:4px;font-family:monospace;font-size:12px;color:var(--ink);}
+
+    .footer-cta{background:var(--charcoal);color:#fff;padding:28px 30px;border-radius:14px;margin:30px 0;text-align:center;}
+    .footer-cta a{display:inline-block;background:var(--gold);color:var(--charcoal);padding:12px 28px;border-radius:8px;font-weight:900;text-decoration:none;margin-top:14px;font-size:14px;}
+    .footer-cta a:hover{opacity:.9;}
+
+    footer.page-foot{text-align:center;color:var(--muted);font-size:12px;padding:30px 0;}
+  </style>
+</head>
+<body>
+
+<header><div class="wrap">
+  <a class="back" href="../">← 자료실 홈</a>
+  <h1>📋 정산 센터 사용 가이드 <span class="badge">v2.3-beta</span></h1>
+  <p class="lead">메타리치 전체 수수료 정산을 자동으로 분배·관리하는 종합 도구입니다.</p>
+  <div class="meta">
+    <span>🏢 메타리치 본사 7단계 조직 대응</span>
+    <span>📊 MYGA 표준 14개 보험사 코드</span>
+    <span>💰 T/H/M/S 4분류 분배</span>
+    <span>🔒 IndexedDB 안전 저장</span>
+  </div>
+</div></header>
+
+<main><div class="wrap">
+
+<!-- ===== 목차 ===== -->
+<div class="toc">
+  <h2>📚 목차</h2>
+  <ol>
+    <li><a href="#intro">정산 센터란?</a></li>
+    <li><a href="#quickstart">10분 빠른 시작</a></li>
+    <li><a href="#tab-home">🏠 홈 탭 — KPI 요약</a></li>
+    <li><a href="#tab-org">🏢 조직도 — 7단계 트리</a></li>
+    <li><a href="#tab-agents">👥 CA 마스터</a></li>
+    <li><a href="#tab-vendors">🏛️ 보험사(코드)</a></li>
+    <li><a href="#tab-rules">⚙️ 룰 — 직급·직책·세금</a></li>
+    <li><a href="#tab-ledger">📥 원장(17컬럼)</a></li>
+    <li><a href="#tab-workflow">🔄 정산 워크플로우 5단계</a></li>
+    <li><a href="#tab-pivot">📊 본부×보험사 피벗</a></li>
+    <li><a href="#tab-dist">🧮 지급월 분배</a></li>
+    <li><a href="#tab-payslip">📄 CA 명세서 (T/H/M/S)</a></li>
+    <li><a href="#codes">MYGA 표준 코드 참고표</a></li>
+    <li><a href="#data">데이터 백업·복원</a></li>
+    <li><a href="#faq">자주 묻는 질문</a></li>
+    <li><a href="#troubleshooting">문제 해결</a></li>
+  </ol>
+</div>
+
+<!-- ===== 1. 정산 센터란? ===== -->
+<section class="chapter" id="intro">
+  <h2><span class="num">01</span>정산 센터란?</h2>
+
+  <p><b>정산 센터</b>는 메타리치 본사 산하 모든 사업단·본부·지점·팀·CA의 수수료를 통합 관리하는 웹 도구입니다.</p>
+
+  <h3>🎯 무엇이 가능한가요?</h3>
+  <ul>
+    <li>보험사가 보내는 <b>원장 엑셀(17컬럼)</b>을 그대로 업로드 → 자동 인식</li>
+    <li><b>4,500명 이상 CA</b>에게 <b>T(총)·H(본부)·M(모집)·S(시책)</b> 4분류로 자동 분배</li>
+    <li>본부×보험사 피벗표 (MYGA <code>payment_LP.php</code> 양식 호환)</li>
+    <li>지급월 단위 정산 + 세전·세후(3.3% 사업소득세) 자동 계산</li>
+    <li>CA 명세서 → 카톡·인쇄·PDF 즉시 출력</li>
+    <li>마감 잠금 → 수정 차단 (감사 추적 가능)</li>
+  </ul>
+
+  <h3>🔒 데이터는 어디에 저장되나요?</h3>
+  <div class="callout gold">
+    모든 데이터는 <b>접속한 브라우저의 IndexedDB</b>에 저장됩니다.<br>
+    서버로 전송되지 않으므로 안전합니다. 단, <b>브라우저 캐시를 지우면 데이터가 사라지므로 정기 백업 필수</b>입니다.
+  </div>
+
+  <h3>💡 어떤 분이 사용하시나요?</h3>
+  <table>
+    <thead><tr><th>역할</th><th>주요 사용 기능</th></tr></thead>
+    <tbody>
+      <tr><td><b>본사 정산 담당자</b></td><td>원장 업로드 → 분배 실행 → xlsx 내보내기</td></tr>
+      <tr><td><b>사업단장 / 본부장</b></td><td>본부×보험사 피벗 · 산하 CA 명세 확인</td></tr>
+      <tr><td><b>지점장 / 팀장</b></td><td>소속 CA 분배 결과 검토 · 명세 배포</td></tr>
+      <tr><td><b>CA 본인</b></td><td>본인 명세서 카톡으로 수신 (직접 접속 불필요)</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ===== 2. 10분 빠른 시작 ===== -->
+<section class="chapter" id="quickstart">
+  <h2><span class="num">02</span>10분 빠른 시작 — 처음 사용자용</h2>
+
+  <p>아래 10단계를 순서대로 따라하시면 정산 결과까지 확인하실 수 있습니다.</p>
+
+  <div class="step">
+    <div class="step-num">1</div>
+    <div class="step-body">
+      <b>홈 화면 진입</b><br>
+      정산 센터에 처음 접속하면 <span class="kbd">🏠 홈</span> 탭이 열립니다. 우상단에 「DB 준비중」 → 「DB 정상」으로 바뀌면 시작 가능.
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">2</div>
+    <div class="step-body">
+      <b>조직도 데모 자동 생성</b> → <span class="kbd">🏢 조직도(7단계)</span> 탭 클릭 → <b>🌱 메타리치 데모</b> 버튼 클릭<br>
+      <span style="color:var(--muted)">메타리치 본사 → 상위본부 2 → 본부 4 → 사업단 13 → 지점 약 65 → 팀 약 195개가 자동 생성됩니다.</span>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">3</div>
+    <div class="step-body">
+      <b>보험사 14개 표준 코드 시드</b> → <span class="kbd">🏛️ 보험사(코드)</span> 탭 → <b>🌱 14개 표준 시드</b> 클릭<br>
+      <span style="color:var(--muted)">dy(메리츠)·lg(KB)·ss(삼성)·db(DB)·hd(현대)·sd(한화)·dh(롯데)·gr(MG)·sy(흥국)·ag(AIG)·nh(농협)·tk(하나)·ac(처브)·00(전체) 자동 등록</span>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">4</div>
+    <div class="step-body">
+      <b>직급별 분배율 시드</b> → <span class="kbd">⚙️ 룰</span> 탭 → 📋 직급별 → <b>🌱 메타리치 표준 8단계 시드</b><br>
+      <span style="color:var(--muted)">CA1(52.5%) · CA2(58%) · SCA(63%) · MCA(68%) · 팀장(73%) · 지점(78%) · S지점(83%) · 본부(88%) 입력됨</span>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">5</div>
+    <div class="step-body">
+      <b>직책 오버라이드 입력</b> → 같은 탭의 👔 직책 오버라이드 서브탭<br>
+      예시값: 팀장 3 / 지점장 2 / 사업단장 1.5 / 본부장 1 / 상위본부장 0.5 / 본사 0.3 → <b>💾 저장</b>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">6</div>
+    <div class="step-body">
+      <b>CA 마스터 일괄 등록</b> → <span class="kbd">👥 CA</span> 탭 → 📥 xlsx 일괄 → <b>테스트_CA마스터_v23.xlsx</b> 업로드<br>
+      필수 컬럼: 이름 · MT코드 · 사용인코드 · 팀명 · 직급 · 위촉일 · 상태
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">7</div>
+    <div class="step-body">
+      <b>보험사 원장 업로드</b> → <span class="kbd">📥 원장</span> 탭 → 종목·보험사 선택 → <b>17컬럼 xlsx</b> 다중 업로드<br>
+      <span style="color:var(--muted)">GA수수료 음수는 자동으로 환수 처리됩니다.</span>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">8</div>
+    <div class="step-body">
+      <b>정산 워크플로우 확인</b> → <span class="kbd">🔄 정산 워크플로우</span> 탭<br>
+      5단계 진행 상태: 마감입력 → 마감작업 → 정산작업 → 마감잠금 → 검증
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">9</div>
+    <div class="step-body">
+      <b>지급월 분배 실행</b> → <span class="kbd">🧮 지급월 분배</span> 탭 → 지급월 선택 → <b>⚡ 분배 실행</b><br>
+      결과: 수령인별 T·M·H·S·세전·세후 자동 계산
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">10</div>
+    <div class="step-body">
+      <b>결과 확인 & xlsx 내보내기</b> → 분배 결과 → 📤 xlsx 클릭 → 다운로드<br>
+      또는 <span class="kbd">📄 CA명세(THMS)</span> 탭 → 개별 CA 명세서 → 카톡용 복사
+    </div>
+  </div>
+
+  <div class="callout blue">
+    <b>✅ 여기까지 완료하면</b> 매월 정산 한 사이클이 끝납니다. 다음 달은 6번(CA)·7번(원장)·9번(분배)만 반복하시면 됩니다.
+  </div>
+</section>
+
+<!-- ===== 3. 홈 탭 ===== -->
+<section class="chapter" id="tab-home">
+  <h2><span class="num">03</span>🏠 홈 탭 — 한눈에 보는 KPI</h2>
+
+  <div class="tab-card">
+    <h3>🏠 홈 <span class="tag">메인 대시보드</span></h3>
+
+    <h4>이번 달 지급 요약 (KPI 5개)</h4>
+    <table>
+      <thead><tr><th>지표</th><th>의미</th></tr></thead>
+      <tbody>
+        <tr><td>💰 이번달 지급</td><td>이번 달에 실제 지급될 분급 총액</td></tr>
+        <tr><td>📊 수수료 T(총)</td><td>보험사가 지급한 GA수수료 합계 (분배 전 원천)</td></tr>
+        <tr><td>👤 수수료 M(모집)</td><td>CA에게 직접 지급되는 모집수수료</td></tr>
+        <tr><td>🏢 수수료 H+S</td><td>본부·시책 합계 (조직장·인센티브 분배)</td></tr>
+        <tr><td>↩️ 환수 (GA수수료 음수)</td><td>실효·해지·철회·취소 시 자동 차감</td></tr>
+      </tbody>
+    </table>
+
+    <h4>차트 2개</h4>
+    <ul>
+      <li><b>향후 12개월 지급 예측</b>: 분급 스케줄 기반 막대 차트</li>
+      <li><b>본부별 분배 (이번 달)</b>: GAK·원플래너·아크팜스·메타리치 본부 도넛 차트</li>
+    </ul>
+
+    <h4>다음 할 일 ✅</h4>
+    <p>아직 설정 안 된 단계(조직도·보험사·룰·CA·원장)를 자동 감지해 <b>바로가기 버튼</b>으로 안내합니다.</p>
+
+    <div class="callout gray">
+      💡 <b>홈은 항상 첫 진입 화면입니다.</b> 다른 탭 작업 후 돌아오면 최신 KPI가 자동 갱신됩니다.
+    </div>
+  </div>
+</section>
+
+<!-- ===== 4. 조직도 ===== -->
+<section class="chapter" id="tab-org">
+  <h2><span class="num">04</span>🏢 조직도 — 메타리치 본사 7단계</h2>
+
+  <div class="tab-card">
+    <h3>🏢 조직도(7단계) <span class="tag">L0~L5</span></h3>
+
+    <h4>계층 구조</h4>
+    <table>
+      <thead><tr><th>레벨</th><th>명칭</th><th>예시</th><th>직책</th></tr></thead>
+      <tbody>
+        <tr><td>L0</td><td>메타리치 본사</td><td>메타리치 (1개)</td><td>본사장</td></tr>
+        <tr><td>L1</td><td>상위본부</td><td>영업총괄·관리총괄</td><td>상위본부장</td></tr>
+        <tr><td>L2</td><td>본부</td><td>GAK·원플래너·아크팜스·메타리치</td><td>본부장</td></tr>
+        <tr><td>L3</td><td>사업단</td><td>더원사업단 등</td><td>사업단장</td></tr>
+        <tr><td>L4</td><td>지점</td><td>약 500개</td><td>지점장</td></tr>
+        <tr><td>L5</td><td>팀</td><td>다수</td><td>팀장</td></tr>
+        <tr><td>(L6)</td><td>CA</td><td>약 4,500명</td><td>(마스터에서 관리)</td></tr>
+      </tbody>
+    </table>
+
+    <h4>주요 버튼</h4>
+    <ul>
+      <li><b>+ 신규</b>: 조직 한 건 수동 등록 (모달 입력)</li>
+      <li><b>📥 xlsx</b>: 조직명·계층·코드 컬럼으로 일괄 등록</li>
+      <li><b>🌱 메타리치 데모 (시연용)</b>: 7단계 자동 생성 (약 280개 조직 노드)</li>
+    </ul>
+
+    <h4>트리 사용법</h4>
+    <ul>
+      <li>좌측 트리에서 조직 클릭 → 우측에 상세 패널 표시</li>
+      <li>상단 검색창에 조직명 또는 코드 입력 → 실시간 필터링</li>
+      <li>각 조직 옆에 <b>산하 CA 수</b>가 자동 집계됨</li>
+    </ul>
+
+    <div class="callout gold">
+      🔑 <b>MYGA 호환 코드</b>: 본부 1=GAK, 2=원플래너, 5=아크팜스, 6=메타리치 (3·4 결번). 본사 코드 96=더원.
+    </div>
+  </div>
+</section>
+
+<!-- ===== 5. CA 마스터 ===== -->
+<section class="chapter" id="tab-agents">
+  <h2><span class="num">05</span>👥 CA 마스터</h2>
+
+  <div class="tab-card">
+    <h3>👥 CA 마스터 <span class="tag">4,500명+ 대응</span></h3>
+
+    <h4>주요 기능</h4>
+    <ul>
+      <li><b>검색</b>: 이름·MT코드·사용인코드·팀명·직급 통합 검색</li>
+      <li><b>직급 필터</b>: CA1·CA2·SCA·MCA·팀장·지점·S지점·본부</li>
+      <li><b>페이지네이션</b>: 100명씩 표시 (4,500명도 빠른 렌더링)</li>
+    </ul>
+
+    <h4>xlsx 일괄 등록 컬럼</h4>
+    <table>
+      <thead><tr><th>컬럼</th><th>설명</th><th>필수</th></tr></thead>
+      <tbody>
+        <tr><td>이름</td><td>설계사 이름</td><td>✅</td></tr>
+        <tr><td>MT코드</td><td>메타리치 내부 식별 코드 (예: MT912345)</td><td>권장</td></tr>
+        <tr><td>사용인코드</td><td>MYGA 사용인코드 8자리 (원장 매칭 키)</td><td>✅</td></tr>
+        <tr><td>팀명</td><td>소속 팀명 (조직도와 일치해야 자동 배속)</td><td>권장</td></tr>
+        <tr><td>직급</td><td>CA1·CA2·SCA·MCA·팀장·지점·S지점·본부</td><td>✅</td></tr>
+        <tr><td>위촉일</td><td>YYYY-MM-DD 형식</td><td>선택</td></tr>
+        <tr><td>상태</td><td>active(정상) 또는 inactive(정지)</td><td>선택</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout blue">
+      💡 <b>팀명 매칭</b>: xlsx의 팀명이 조직도의 팀명과 정확히 일치하면 자동 배속됩니다. 안 맞으면 토스트에 「매칭 N/M」으로 알려줍니다.
+    </div>
+
+    <h4>편집 모달</h4>
+    <p>편집 버튼 클릭 시 모달이 열려 모든 필드 수정 가능. 「팀」 드롭다운에는 L5(팀) 조직만 표시됩니다.</p>
+  </div>
+</section>
+
+<!-- ===== 6. 보험사 ===== -->
+<section class="chapter" id="tab-vendors">
+  <h2><span class="num">06</span>🏛️ 보험사 — MYGA 표준 14개 코드</h2>
+
+  <div class="tab-card">
+    <h3>🏛️ 보험사(코드) <span class="tag">MYGA s_company 호환</span></h3>
+
+    <h4>14개 표준 코드</h4>
+    <table class="mono">
+      <thead><tr><th>코드</th><th>보험사</th><th>상품코드 prefix</th><th>실손월납보</th></tr></thead>
+      <tbody>
+        <tr><td>dy</td><td>메리츠화재</td><td>ldy</td><td>—</td></tr>
+        <tr><td>lg</td><td>KB손보</td><td><b>lkb</b> ⚠️</td><td>—</td></tr>
+        <tr><td>ss</td><td>삼성화재</td><td>lss</td><td>—</td></tr>
+        <tr><td>db</td><td>DB손보</td><td>ldb</td><td>—</td></tr>
+        <tr><td>hd</td><td>현대해상</td><td>lhd</td><td>—</td></tr>
+        <tr><td>sd</td><td>한화손보</td><td>lsd</td><td>—</td></tr>
+        <tr><td>dh</td><td>롯데손보</td><td>ldh</td><td>✅ 대상</td></tr>
+        <tr><td>gr</td><td>MG손보</td><td>lgr</td><td>✅ 대상</td></tr>
+        <tr><td>sy</td><td>흥국화재</td><td>lsy</td><td>✅ 대상</td></tr>
+        <tr><td>ag</td><td>AIG손보</td><td>lag</td><td>—</td></tr>
+        <tr><td>nh</td><td>농협손보</td><td>lnh</td><td>—</td></tr>
+        <tr><td>tk</td><td>하나손보</td><td>ltk</td><td>—</td></tr>
+        <tr><td>ac</td><td>처브손보</td><td>lcb</td><td>—</td></tr>
+        <tr><td>00</td><td>(전체)</td><td>—</td><td>—</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout red">
+      ⚠️ <b>KB손보 분기</b>: 정산코드는 <code>lg</code>, 장기상품코드는 <code>lkb</code>로 다릅니다. 자동 정규화되지만 수동 등록 시 주의.
+    </div>
+
+    <h4>버튼</h4>
+    <ul>
+      <li><b>🌱 14개 표준 시드</b>: 모든 보험사 한 번에 등록</li>
+      <li><b>+ 추가</b>: 신규 보험사 수동 등록</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ===== 7. 룰 ===== -->
+<section class="chapter" id="tab-rules">
+  <h2><span class="num">07</span>⚙️ 룰 — 직급·직책·세금</h2>
+
+  <div class="tab-card">
+    <h3>⚙️ 룰 <span class="tag">T/H/M/S 4분류 산식</span></h3>
+
+    <h4>📋 직급별 분배율 (M = 모집수수료)</h4>
+    <table>
+      <thead><tr><th>직급</th><th>분배율 (M)</th><th>설명</th></tr></thead>
+      <tbody>
+        <tr><td>CA1</td><td>52.5%</td><td>입문 1단계</td></tr>
+        <tr><td>CA2</td><td>58%</td><td>입문 2단계</td></tr>
+        <tr><td>SCA</td><td>63%</td><td>시니어 CA</td></tr>
+        <tr><td>MCA</td><td>68%</td><td>마스터 CA</td></tr>
+        <tr><td>팀장</td><td>73%</td><td>L5 조직장 겸 CA</td></tr>
+        <tr><td>지점</td><td>78%</td><td>L4 조직장 겸 CA</td></tr>
+        <tr><td>S지점</td><td>83%</td><td>특급 지점장</td></tr>
+        <tr><td>본부</td><td>88%</td><td>L2 본부장 겸 CA</td></tr>
+      </tbody>
+    </table>
+
+    <h4>👔 직책 오버라이드 (H = 본부수수료)</h4>
+    <p>조직장은 본인 직접 모집 외에 산하 CA의 GA수수료에 대한 H% 오버라이드도 받습니다.</p>
+    <table>
+      <thead><tr><th>직책</th><th>예시 H%</th></tr></thead>
+      <tbody>
+        <tr><td>팀장</td><td>3%</td></tr>
+        <tr><td>지점장</td><td>2%</td></tr>
+        <tr><td>사업단장</td><td>1.5%</td></tr>
+        <tr><td>본부장</td><td>1%</td></tr>
+        <tr><td>상위본부장</td><td>0.5%</td></tr>
+        <tr><td>본사 본사장</td><td>0.3%</td></tr>
+      </tbody>
+    </table>
+
+    <h4>💰 세금·지급시기</h4>
+    <ul>
+      <li><b>사업소득세율</b>: 기본 3.3% (세전→세후 자동 차감)</li>
+      <li><b>디폴트 지급시기</b>: 말일(1) · 추가(2) · <b>27일(3)</b> 디폴트</li>
+      <li><b>디폴트 정산구분</b>: 세전(1) · <b>세후(2)</b> 디폴트</li>
+    </ul>
+
+    <div class="callout blue">
+      <b>분배 산식</b>:<br>
+      T(총) = 보험사 지급 GA수수료<br>
+      M(모집) = T × 직급분배율<br>
+      H(본부) = T × 직책오버라이드%<br>
+      S(시책) = 별도 인센티브 (수동 추가)<br>
+      <b>세후 = (M + H + S) × (1 - 0.033)</b>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 8. 원장 ===== -->
+<section class="chapter" id="tab-ledger">
+  <h2><span class="num">08</span>📥 원장 — MYGA 17컬럼 표준</h2>
+
+  <div class="tab-card">
+    <h3>📥 원장(17컬럼) <span class="tag">장기 input_F.php 호환</span></h3>
+
+    <h4>업로드 방법</h4>
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">업로드 월 선택 (예: 2026-05)</div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">종목 선택: <b>장기 / 생명 / 자동차 / 일반</b></div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">보험사 선택 (자동 인식 추천)</div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body"><b>📥 xlsx 선택</b> → 다중 파일 동시 업로드 가능</div>
+    </div>
+
+    <h4>17컬럼 표준 (MYGA 마감입력 양식)</h4>
+    <table>
+      <thead><tr><th>#</th><th>컬럼</th><th>예시</th><th>비고</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>본사</td><td>96</td><td>더원=96</td></tr>
+        <tr><td>2</td><td>정산월구분</td><td>20260501</td><td>YYYYMM + 파일구분 2자리</td></tr>
+        <tr><td>3</td><td>회사코드</td><td>dh</td><td>2자리 소문자</td></tr>
+        <tr><td>4</td><td>상품코드</td><td>ldh0041</td><td>1회차만 체크</td></tr>
+        <tr><td>5</td><td>영수일</td><td>20260515</td><td>YYYYMMDD</td></tr>
+        <tr><td>6</td><td>증권번호</td><td>1234...</td><td>—</td></tr>
+        <tr><td>7</td><td>사용인코드</td><td>81484864</td><td>CA 매칭 키</td></tr>
+        <tr><td>8</td><td>납입회차</td><td>1, 2, 4...</td><td>정확히 입력</td></tr>
+        <tr><td>9</td><td>월납보험료</td><td>50000</td><td>—</td></tr>
+        <tr><td>10</td><td><b>수정보험료</b></td><td>100000</td><td>계속분 0=자동승계</td></tr>
+        <tr><td>11</td><td><b>조정보험료</b></td><td>0</td><td>보험사 수정값</td></tr>
+        <tr><td>12</td><td><b>GA수수료</b></td><td>280000</td><td>음수=환수</td></tr>
+        <tr><td>13</td><td>실손월납보</td><td>0</td><td>롯데·MG·흥국만</td></tr>
+        <tr><td>14</td><td>실손수정보</td><td>0</td><td>한화 2년차 갱신용</td></tr>
+        <tr><td>15</td><td>납입구분</td><td>초회</td><td>9종 중 하나</td></tr>
+        <tr><td>16</td><td>피보험자</td><td>홍길동</td><td>—</td></tr>
+        <tr><td>17</td><td>계약자</td><td>홍길동</td><td>—</td></tr>
+      </tbody>
+    </table>
+
+    <h4>납입구분 9종</h4>
+    <ul>
+      <li><b>초회</b>: 첫 회차 (GA수수료 양수)</li>
+      <li><b>계속</b>: 2회차 이후 정상 납입</li>
+      <li><b>감액</b>: 보험료 감액 (수수료=0)</li>
+      <li>🔻 환수 트리거 (GA수수료 음수): <b>실효 / 해지 / 철회 / 취소</b></li>
+      <li><b>부활</b>: 실효 후 복원 (수수료 회복)</li>
+      <li><b>환급</b>: 환급 처리</li>
+    </ul>
+
+    <div class="callout red">
+      ⚠️ <b>중복 업로드 차단</b>: 동일 정산월구분 + 보험회사 조합은 중복 저장되지 않습니다.
+    </div>
+
+    <h4>업로드 후 작업</h4>
+    <ul>
+      <li><b>🔄 분급 재계산</b>: 룰 변경 후 재실행</li>
+      <li><b>🔒 잠금</b>: 개별 원장 마감 잠금 (수정 차단)</li>
+      <li><b>⚠️ 전체 삭제</b>: 모든 원장 및 분급 초기화 (주의!)</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ===== 9. 워크플로우 ===== -->
+<section class="chapter" id="tab-workflow">
+  <h2><span class="num">09</span>🔄 정산 워크플로우 5단계</h2>
+
+  <div class="tab-card">
+    <h3>🔄 정산 워크플로우 <span class="tag">MYGA 표준 흐름</span></h3>
+
+    <p>MYGA의 표준 정산 흐름을 그대로 구현했습니다. 월·종목·보험사를 선택하면 진행 상태를 자동 표시.</p>
+
+    <table>
+      <thead><tr><th>단계</th><th>이름</th><th>작업 내용</th></tr></thead>
+      <tbody>
+        <tr><td>STEP 1</td><td><b>마감입력</b></td><td>원장 xlsx 업로드 (input_F)</td></tr>
+        <tr><td>STEP 2</td><td><b>마감작업(매칭)</b></td><td>CA 사용인코드 매칭 검증</td></tr>
+        <tr><td>STEP 3</td><td><b>정산작업</b></td><td>분배 자동 계산 (T/H/M/S)</td></tr>
+        <tr><td>STEP 4</td><td><b>마감잠금</b></td><td>🔒 수정 차단 (감사 보존)</td></tr>
+        <tr><td>STEP 5</td><td><b>검증</b></td><td>마감실적 ↔ 통합수수료 비교</td></tr>
+      </tbody>
+    </table>
+
+    <h4>단계 상태 색상</h4>
+    <ul>
+      <li>⚪ 회색: 미진행</li>
+      <li>🟡 노란색: 현재 단계</li>
+      <li>🟢 녹색: 완료</li>
+      <li>🔴 빨강: 잠금 (수정 불가)</li>
+    </ul>
+
+    <div class="callout gold">
+      💡 <b>마감 잠금 후</b>에도 「🧮 지급월 분배」와 「📊 본부×보험사 피벗」 결과 조회는 가능합니다. 단, 원장 수정만 차단됩니다.
+    </div>
+  </div>
+</section>
+
+<!-- ===== 10. 피벗 ===== -->
+<section class="chapter" id="tab-pivot">
+  <h2><span class="num">10</span>📊 본부×보험사 피벗</h2>
+
+  <div class="tab-card">
+    <h3>📊 본부×보험사 피벗 <span class="tag">MYGA payment_LP.php 호환</span></h3>
+
+    <p>MYGA의 정산작업 결과 화면을 그대로 재현한 피벗 테이블입니다.</p>
+
+    <h4>피벗 구조</h4>
+    <ul>
+      <li><b>행</b>: 본부 (GAK · 원플래너 · 아크팜스 · 메타리치 + 합계)</li>
+      <li><b>열</b>: 14개 보험사 + 합계</li>
+      <li><b>셀</b>: <b>3값 세로 표시</b>
+        <ul>
+          <li>🔵 파란색: 신규실적 (초회)</li>
+          <li>🔴 빨간색: 수정·조정</li>
+          <li>⚫ 검은색: 지급액 (전체)</li>
+        </ul>
+      </li>
+    </ul>
+
+    <h4>합계 자동 계산</h4>
+    <ul>
+      <li>세로 합 (보험사별 본부 총합)</li>
+      <li>가로 합 (본부별 보험사 총합)</li>
+      <li>우하단 총합 (전체 합)</li>
+    </ul>
+
+    <div class="callout blue">
+      📌 <b>검증 용도</b>: MYGA에서 정산 후 본부×보험사 피벗 화면과 본 도구의 피벗 결과를 1:1 비교하면 정산 정확도 검증 가능.
+    </div>
+
+    <h4>버튼</h4>
+    <ul>
+      <li><b>📊 피벗 생성</b>: 선택 월·종목으로 재계산</li>
+      <li><b>📤 xlsx</b>: 피벗 결과 엑셀 다운로드 (향후 추가 예정)</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ===== 11. 지급월 분배 ===== -->
+<section class="chapter" id="tab-dist">
+  <h2><span class="num">11</span>🧮 지급월 분배 (T/H/M/S 4분류)</h2>
+
+  <div class="tab-card">
+    <h3>🧮 지급월 분배 <span class="tag">세전·세후 자동</span></h3>
+
+    <h4>실행 방법</h4>
+    <ol>
+      <li>지급월 선택 (예: 2026-06)</li>
+      <li>종목 필터 (선택: 장기/생명/자동차/일반)</li>
+      <li>보험사 필터 (선택)</li>
+      <li><b>⚡ 분배 실행</b> 클릭</li>
+    </ol>
+
+    <h4>결과 통계 (KPI 4개)</h4>
+    <table>
+      <thead><tr><th>지표</th><th>의미</th></tr></thead>
+      <tbody>
+        <tr><td>M (모집)</td><td>CA 전체에게 지급될 모집수수료 합계</td></tr>
+        <tr><td>H+S (직책)</td><td>본부장·지점장·팀장 직책 오버라이드 + 시책</td></tr>
+        <tr><td>세전 합</td><td>M + H + S</td></tr>
+        <tr><td>세후 합 (3.3% 차감)</td><td>실제 송금되는 금액</td></tr>
+      </tbody>
+    </table>
+
+    <h4>결과 테이블 9컬럼</h4>
+    <p><b>수령인 · 역할 · 소속 · 건수 · T · M · H+S · 세전 · 세후</b></p>
+
+    <h4>필터·검색</h4>
+    <ul>
+      <li><b>수령인 검색</b>: 이름·소속 통합</li>
+      <li><b>역할 필터</b>: CA·팀장·지점장·사업단장·본부장·상위본부장·본사장</li>
+    </ul>
+
+    <h4>📤 xlsx 출력 컬럼 (10개)</h4>
+    <p>이름 · 역할 · 소속 · 건수 · T · M · H · S · 세전합 · 세후합</p>
+
+    <div class="callout gold">
+      💡 <b>월별 정산 마무리</b>: 분배 결과 → xlsx 다운로드 → 송금 담당자에게 전달 → 종료. 이 한 파일이 그달의 정산 결과 전체입니다.
+    </div>
+  </div>
+</section>
+
+<!-- ===== 12. CA 명세서 ===== -->
+<section class="chapter" id="tab-payslip">
+  <h2><span class="num">12</span>📄 CA 명세서 (T/H/M/S 4분류)</h2>
+
+  <div class="tab-card">
+    <h3>📄 CA명세(THMS) <span class="tag">MYGA end_L.php 호환</span></h3>
+
+    <h4>명세서 구성</h4>
+    <p>설계사 1명 선택 시 다음 정보가 자동 표시됩니다.</p>
+    <ul>
+      <li><b>기본정보</b>: 이름 · MT코드 · 사용인코드 · 직급 · 소속</li>
+      <li><b>세전 지급액</b> / <b>세후 지급액</b> (3.3% 차감)</li>
+      <li><b>T/H/M/S 4분류 상세</b></li>
+      <li><b>환수 행</b>: 실효·해지·철회·취소 별도 표시 (빨간색)</li>
+    </ul>
+
+    <h4>출력 옵션</h4>
+    <ul>
+      <li><b>🖨️ 인쇄/PDF</b>: 브라우저 인쇄 다이얼로그 → PDF로 저장 가능</li>
+      <li><b>📋 카톡용 복사</b>: 텍스트로 변환되어 클립보드 복사 → 카톡 붙여넣기</li>
+    </ul>
+
+    <h4>카톡용 복사 예시</h4>
+    <pre>📋 [2026-06 김데모님 명세 v2.3]
+MT: MT912345 · 직급: SCA
+세후 지급: 1,234,567원
+(세전 1,278,041원 - 3.3%)</pre>
+
+    <div class="callout blue">
+      💡 <b>4,500명 일괄 발송</b>: 각 CA별로 카톡 복사 → 잔디·카톡 채널에 자동 발송하는 매크로와 연동 가능.
+    </div>
+  </div>
+</section>
+
+<!-- ===== 13. MYGA 코드표 ===== -->
+<section class="chapter" id="codes">
+  <h2><span class="num">13</span>📐 MYGA 표준 코드 참고표</h2>
+
+  <h3>1. 본사·본부 코드 (s_code0 · s_code1)</h3>
+  <table class="mono">
+    <thead><tr><th>레벨</th><th>코드</th><th>의미</th></tr></thead>
+    <tbody>
+      <tr><td>본사</td><td>96</td><td>더원</td></tr>
+      <tr><td>본부</td><td>1</td><td>GAK</td></tr>
+      <tr><td>본부</td><td>2</td><td>원플래너</td></tr>
+      <tr><td>본부</td><td>5</td><td>아크팜스</td></tr>
+      <tr><td>본부</td><td>6</td><td>메타리치 본부</td></tr>
+    </tbody>
+  </table>
+  <p style="color:var(--muted);font-size:13px;">⚠️ 본부 코드 3·4는 결번입니다.</p>
+
+  <h3>2. 정산구분 코드 (s_tax)</h3>
+  <table class="mono">
+    <thead><tr><th>코드</th><th>의미</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>세전 기타항목</td></tr>
+      <tr><td>2</td><td>세후 기타항목</td></tr>
+    </tbody>
+  </table>
+
+  <h3>3. 지급시기 코드 (s_gubun)</h3>
+  <table class="mono">
+    <thead><tr><th>코드</th><th>의미</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>말일</td></tr>
+      <tr><td>2</td><td>추가</td></tr>
+      <tr><td>3</td><td>27일 (디폴트)</td></tr>
+    </tbody>
+  </table>
+
+  <h3>4. 지급자 레벨 (s_group)</h3>
+  <table class="mono">
+    <thead><tr><th>코드</th><th>의미</th></tr></thead>
+    <tbody>
+      <tr><td>0</td><td>본사</td></tr>
+      <tr><td>1</td><td>본부</td></tr>
+      <tr><td>2</td><td>지점</td></tr>
+      <tr><td>3</td><td>팀</td></tr>
+    </tbody>
+  </table>
+
+  <h3>5. 장기상품 코드 형식</h3>
+  <p><code>l + 회사약어(2~3자) + 일련번호(4자리)</code></p>
+  <table class="mono">
+    <thead><tr><th>예시</th><th>보험사</th></tr></thead>
+    <tbody>
+      <tr><td>lsy0086</td><td>흥국화재</td></tr>
+      <tr><td>ldb0096</td><td>DB손보</td></tr>
+      <tr><td>lss0094</td><td>삼성화재</td></tr>
+      <tr><td>LDY0096</td><td>메리츠 (대소문자 혼용 → 정규화)</td></tr>
+      <tr><td>lag0031</td><td>AIG손보</td></tr>
+      <tr><td>lcb0001</td><td>처브손보</td></tr>
+      <tr><td>lkb0120</td><td>KB손보 (정산코드는 lg)</td></tr>
+      <tr><td>ldh0041</td><td>롯데손보</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ===== 14. 데이터 ===== -->
+<section class="chapter" id="data">
+  <h2><span class="num">14</span>💾 데이터 백업·복원</h2>
+
+  <h3>백업 (정기 권장)</h3>
+  <ol>
+    <li>우상단 <b>💾 백업</b> 버튼 클릭</li>
+    <li>JSON 파일 자동 다운로드 (파일명: <code>메타리치_v2.3_백업_YYYY-MM-DD.json</code>)</li>
+    <li>안전한 곳(OneDrive·외장하드)에 보관</li>
+  </ol>
+
+  <div class="callout gold">
+    💡 <b>권장 백업 주기</b>: 매주 1회 + 매월 분배 실행 후 1회. 최소 2개월치 보관.
+  </div>
+
+  <h3>복원</h3>
+  <ol>
+    <li>우상단 <b>📂 복원</b> 버튼 클릭</li>
+    <li>JSON 파일 선택</li>
+    <li>"현재 데이터 덮어씁니다" 확인 → <b>확인</b></li>
+    <li>복원 완료 메시지 (몇 초~몇 분 소요)</li>
+  </ol>
+
+  <div class="callout red">
+    ⚠️ <b>복원은 덮어쓰기입니다.</b> 현재 데이터는 모두 삭제되므로 복원 전에 반드시 현재 데이터 백업하세요.
+  </div>
+
+  <h3>IndexedDB 위치</h3>
+  <p>브라우저별 저장 위치:</p>
+  <ul>
+    <li><b>Chrome / Edge</b>: <code>%LOCALAPPDATA%\Google\Chrome\User Data\Default\IndexedDB</code></li>
+    <li><b>Firefox</b>: 프로필 폴더 내 <code>storage\default</code></li>
+  </ul>
+
+  <div class="callout red">
+    ⚠️ <b>브라우저 캐시 삭제 시 데이터 소실 위험!</b><br>
+    Chrome 설정 → "인터넷 사용 기록 삭제" 시 IndexedDB도 함께 삭제될 수 있습니다. 반드시 사전 백업하세요.
+  </div>
+</section>
+
+<!-- ===== 15. FAQ ===== -->
+<section class="chapter" id="faq">
+  <h2><span class="num">15</span>❓ 자주 묻는 질문</h2>
+
+  <h3>Q. 원장을 잘못 올렸는데 다시 올릴 수 있나요?</h3>
+  <p>A. 📥 원장 탭에서 해당 원장의 「삭제」 버튼 → 다시 업로드. 단, <b>마감 잠금된 원장은 삭제 불가</b>입니다.</p>
+
+  <h3>Q. CA 명세서를 4,500명 한번에 출력할 수 있나요?</h3>
+  <p>A. 현재 v2.3-beta는 1명씩 출력입니다. 다음 버전(v2.4)에서 일괄 PDF 출력 기능을 추가할 예정입니다. <br>임시로 「🧮 지급월 분배」 결과 xlsx로 받아서 메일머지(Excel + Word)로 처리하시면 됩니다.</p>
+
+  <h3>Q. 같은 PC에서 두 명이 다른 데이터로 사용할 수 있나요?</h3>
+  <p>A. 브라우저 프로필을 분리하시면 가능합니다. Chrome에서 새 프로필 생성 → 그 프로필에서 접속 → 별도 IndexedDB 사용.</p>
+
+  <h3>Q. 모바일에서도 사용 가능한가요?</h3>
+  <p>A. 표시는 가능하지만 <b>편집 작업은 PC 권장</b>입니다. xlsx 업로드·다중 선택은 모바일에서 제한이 있습니다.</p>
+
+  <h3>Q. 분배 결과가 MYGA와 다릅니다.</h3>
+  <p>A. 다음 5가지를 점검하세요:</p>
+  <ol>
+    <li>CA의 직급이 정확한가? (메타리치 본사 직급결정 공문 기준)</li>
+    <li>직책 오버라이드% 값이 메타리치 정책과 일치하는가?</li>
+    <li>원장의 「사용인코드」가 CA 마스터의 「사용인코드」와 정확히 매칭되는가?</li>
+    <li>GA수수료 음수(환수)가 올바르게 처리되었는가?</li>
+    <li>세금(3.3%) 적용 시점이 일치하는가? (세전/세후 구분)</li>
+  </ol>
+
+  <h3>Q. 데이터를 다른 PC로 옮기려면?</h3>
+  <p>A. 💾 백업 JSON → USB·OneDrive로 이동 → 다른 PC에서 📂 복원. 완료까지 약 1~5분.</p>
+
+  <h3>Q. v2.3-alpha와 v2.3-beta 차이는?</h3>
+  <p>A. beta는 alpha 단계에서 발견된 이슈를 보완한 버전입니다. <b>beta 사용 권장</b>이며 alpha는 참고용으로만 유지됩니다.</p>
+</section>
+
+<!-- ===== 16. 문제해결 ===== -->
+<section class="chapter" id="troubleshooting">
+  <h2><span class="num">16</span>🛠 문제 해결</h2>
+
+  <h3>1. 화면이 안 뜹니다 (백지)</h3>
+  <ul>
+    <li>새로고침 <span class="kbd">F5</span> 또는 <span class="kbd">Ctrl + Shift + R</span> (강제 새로고침)</li>
+    <li>다른 브라우저로 시도 (Chrome / Edge 권장)</li>
+    <li>인터넷 연결 확인 (외부 CDN 라이브러리 로드 필요)</li>
+  </ul>
+
+  <h3>2. xlsx 업로드 시 오류 발생</h3>
+  <ul>
+    <li>파일 확장자가 <code>.xlsx</code>인지 확인 (xls·csv 미지원)</li>
+    <li>파일 크기 100MB 초과 시 잘라서 업로드</li>
+    <li>첫 행이 컬럼명인지 확인 (헤더 필수)</li>
+    <li>한글 컬럼명 그대로 사용 (정산월구분·회사코드·사용인코드 등)</li>
+  </ul>
+
+  <h3>3. 분배 실행 시 결과가 0원으로 나옴</h3>
+  <ul>
+    <li>CA 마스터의 「사용인코드」와 원장의 「사용인코드」 매칭 확인</li>
+    <li>직급별 분배율(M%) 시드 완료 여부 확인</li>
+    <li>해당 월의 원장이 실제 존재하는지 확인 (📥 원장 탭)</li>
+  </ul>
+
+  <h3>4. 데이터가 갑자기 사라졌습니다</h3>
+  <ul>
+    <li>브라우저 캐시·기록 삭제 여부 확인 → 백업 JSON으로 복원</li>
+    <li>시크릿/InPrivate 모드는 종료 시 데이터 자동 삭제됨 → 일반 모드 사용</li>
+    <li>다른 브라우저·프로필로 접속한 게 아닌지 확인</li>
+  </ul>
+
+  <h3>5. 「DB 오류」 빨간 뱃지 표시</h3>
+  <ul>
+    <li>F12 → Console 탭에서 오류 메시지 확인</li>
+    <li>브라우저 IndexedDB 권한 거부됨 (보안 설정 확인)</li>
+    <li>최신 Chrome/Edge 사용 권장 (Chromium 100 이상)</li>
+  </ul>
+</section>
+
+<!-- ===== 푸터 CTA ===== -->
+<div class="footer-cta">
+  <h2 style="color:var(--gold);font-size:20px;margin-bottom:8px;border:none;">📋 지금 바로 시작하기</h2>
+  <p style="color:#c7cdd6;">메타리치 본사 전체 수수료 정산을 한 곳에서.</p>
+  <a href="./">정산 센터 열기 →</a>
+</div>
+
+<footer class="page-foot">
+  <p>메타리치 본사 · 더원사업단 자료실 · 정산센터 v2.3-beta</p>
+  <p>본 가이드는 내부 업무용입니다. 외부 배포 시 사전 협의 바랍니다.</p>
+</footer>
+
+</div></main>
+
+</body>
+</html>
