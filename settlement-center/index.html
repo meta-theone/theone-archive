@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
+<script src="./distribution-client.js?v=1"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>메타리치 수수료 자동분배 시스템 v2.3-beta | 리아</title>
@@ -246,7 +247,7 @@ tr.totalrow td{background:#fff8e5;font-weight:900;color:var(--navy)}
         <h2>수수료 분배 규칙 <span class="sub">직급별 + 상품유형별 + 건당한도 + 회차별</span></h2>
         <div class="banner blue">
           <b>📐 v2.1 분배 공식</b><br>
-          CA 수수료 = MIN(지급예상액 × <b>분배율</b>, <b>건당 한도</b>) × <b>회차별 비율</b><br>
+
           ※ 분배율 우선순위: ① 개인 오버라이드 ② 직급×상품유형 ③ 직급 기본
         </div>
 
@@ -1838,22 +1839,11 @@ function getAgentGrade(agentId, month){
   const ag = CACHE.agents.find(a=>a.id===agentId);
   return ag?.grade||null;
 }
-function getRateForAgent(agentId, grade, productType){
-  // 우선순위: 개인 오버라이드 > 직급+상품유형 > 직급 기본
-  const ov = CACHE.overrides.find(o=>o.agentId===agentId);
-  if(ov) return {rate:ov.rate, cap:0, source:'override'};
-  const pr = CACHE.productRules.find(p=>p.grade===grade && p.productType===productType);
-  if(pr) return {rate:pr.rate, cap:pr.cap||0, source:'product'};
-  const gr = CACHE.rules.grades.find(g=>g.name===grade);
-  if(gr) return {rate:gr.rate, cap:gr.cap||0, source:'grade'};
-  return {rate:0, cap:0, source:'none'};
-}
-function calcInstallmentRatio(installment){
-  const i = CACHE.rules.installment||{y1:100,m13:0,y14:0,y25:0,y37:0};
-  return (i[installment]||0)/100;
-}
-
 async function runDistribution(){
+  const button=document.querySelector('[onclick="runDistribution()"]');
+  if(button.disabled)return;
+  button.disabled=true;
+  try{
   const m=document.getElementById('distMonth').value;
   const v=document.getElementById('distVendor').value;
   if(!m){toast('월 선택','red');return}
@@ -1868,121 +1858,14 @@ async function runDistribution(){
   if(rows.length===0){pb.style.display='none';toast('원장 없음','red');return}
 
   pm.textContent=`${rows.length.toLocaleString()}건 계산중...`;pbar.style.width='25%';
-  await new Promise(r=>setTimeout(r,30));
-
-  // Index
-  const agentByCode={},agentByName={};
-  CACHE.agents.forEach(a=>{if(a.mtCode)agentByCode[a.mtCode]=a; agentByName[a.name]=a;});
-  const orgById={};CACHE.orgs.forEach(o=>orgById[o.id]=o);
-  function ancestors(teamId){const chain=[];let c=orgById[teamId];while(c){chain.push(c);c=c.parentId?orgById[c.parentId]:null}return chain}
-  function findLeader(org){return org&&org.leaderId?CACHE.agents.find(a=>a.id===org.leaderId):null}
-  const pos=CACHE.rules.positions||{};
-
-  // 쉐어 인덱스: contractNo → share
-  const shareByContract={};
-  CACHE.shares.filter(s=>s.month===m).forEach(s=>{shareByContract[s.contractNo]=s});
-
-  // distMap 키: recipientId|role|category
-  const distMap={};
-  function add(id,name,role,orgName,category,cnt,amt){
-    const k=id+'|'+role+'|'+category;
-    if(!distMap[k])distMap[k]={recipientId:id,name,role,orgName,category,count:0,amount:0};
-    distMap[k].count+=cnt;
-    distMap[k].amount+=amt;
+  const { result, unmatched } = await calculateDistribution(m, rows, CACHE);
+  if (document.getElementById('distMonth').value !== m || document.getElementById('distVendor').value !== v) {
+    toast('계산 중 조건이 바뀌었습니다. 다시 실행해 주세요.', 'red');
+    pb.style.display='none';
+    return;
   }
+  lastDistResult = result;
 
-  let unmatched=0, processed=0;
-  for(const row of rows){
-    processed++;
-    if(processed%500===0){
-      pbar.style.width=(25+(processed/rows.length)*55)+'%';
-      pm.textContent=`${processed.toLocaleString()}/${rows.length.toLocaleString()}`;
-      await new Promise(r=>setTimeout(r,0));
-    }
-    // 쉐어 검사: 해당 증권이 쉐어 등록되어 있으면 모집인 1명을 N명으로 전환
-    const share = row.contractNo ? shareByContract[row.contractNo] : null;
-    let agentsForRow;
-    if(share && share.participants && share.participants.length>0){
-      agentsForRow = share.participants.map(p=>{
-        const a = CACHE.agents.find(x=>x.id===p.agentId);
-        return a ? {agent:a, weight:p.ratio/100} : null;
-      }).filter(Boolean);
-    }else{
-      const ag = agentByCode[row.agentCode] || agentByName[row.agentName];
-      if(!ag){unmatched++;continue}
-      agentsForRow = [{agent:ag, weight:1}];
-    }
-
-    const pay = row.expectedAmount;
-    if(pay<=0) continue;
-    const instRatio = calcInstallmentRatio(row.installment);
-
-    for(const {agent:ag, weight} of agentsForRow){
-      // 직급 (월별 이력 우선)
-      const grade = getAgentGrade(ag.id, m);
-      const {rate, cap} = getRateForAgent(ag.id, grade, row.productType);
-      if(rate<=0) continue;
-      // CA 수수료 = pay × 분배율 × 회차비율, 단 cap 적용
-      let caAmt = pay * (rate/100) * instRatio * weight;
-      if(cap>0 && caAmt > cap) caAmt = cap;
-      add(ag.id, ag.name, 'CA', '', 'commission', share?weight:1, caAmt);
-      // 직책 오버라이드 (조직 체인)
-      const chain = ancestors(ag.teamId);
-      for(const org of chain){
-        const lvl=org.level;
-        const posKey=POS_KEY[lvl];const posLabel=POSITION_NAME[lvl];
-        const posRate=pos[posKey]||0;
-        if(posRate<=0)continue;
-        const leader=findLeader(org);if(!leader)continue;
-        const amt = pay * (posRate/100) * instRatio * weight;
-        add(leader.id, leader.name, posLabel, org.name, 'commission', share?weight:1, amt);
-      }
-    }
-  }
-
-  // === 조직관리비 계산 ===
-  pm.textContent='조직관리비 계산...';pbar.style.width='85%';await new Promise(r=>setTimeout(r,0));
-  for(const row of rows){
-    const ag = agentByCode[row.agentCode] || agentByName[row.agentName];
-    if(!ag) continue;
-    const grade = getAgentGrade(ag.id, m);
-    // 매칭되는 mgmt_rule
-    const rule = CACHE.mgmtRules.find(r =>
-      r.vendor===row.vendor &&
-      (r.productType===row.productType || r.productType==='전체') &&
-      (!r.grade || r.grade===grade));
-    if(!rule) continue;
-    const base = rule.base==='monthly_premium' ? row.premium
-              : rule.base==='converted_premium' ? row.convertedPrem
-              : row.expectedAmount;
-    if(base<=0) continue;
-    let amt = base * (rule.rate/100);
-    if(rule.cap>0 && amt > rule.cap) amt = rule.cap;
-    add(ag.id, ag.name, 'CA', '', 'mgmt_fee', 1, amt);
-  }
-
-  // === 공제 ===
-  pm.textContent='공제 계산...';pbar.style.width='90%';await new Promise(r=>setTimeout(r,0));
-  CACHE.deductions.filter(d=>d.month===m).forEach(d=>{
-    if(d.fromAgentId){
-      const a=CACHE.agents.find(x=>x.id===d.fromAgentId);
-      if(a) add(a.id,a.name,'CA','','deduction',1,-d.amount);
-    }
-    if(d.toAgentId){
-      const a=CACHE.agents.find(x=>x.id===d.toAgentId);
-      if(a) add(a.id,a.name,'CA','','deduction',1,d.amount);
-    }
-  });
-
-  // === 환수 ===
-  pm.textContent='환수 차감...';pbar.style.width='95%';await new Promise(r=>setTimeout(r,0));
-  for(const c of CACHE.clawBacks.filter(c=>c.month===m && c.status!=='applied')){
-    const a=CACHE.agents.find(x=>x.id===c.agentId);
-    if(a) add(a.id,a.name,'CA','','claw_back',1,-Math.abs(c.amount));
-  }
-
-  // 결과
-  lastDistResult = Object.values(distMap).sort((a,b)=>b.amount-a.amount);
   await dbClear('distributions');
   await dbPut('distributions',{id:'last',month:m,vendor:v||'전체',
     calculatedAt:new Date().toISOString(),rowCount:rows.length,unmatched,result:lastDistResult});
@@ -2005,7 +1888,14 @@ async function runDistribution(){
     </div>`;
   renderDistResult();
   toast(`분배 완료 · 수수료 ${fmtMoney(com)}`,'gold');
+  }catch(error){
+    document.getElementById('distProgress').style.display='none';
+    toast(error.message || '수수료 계산에 실패했습니다. 다시 시도해 주세요.','red');
+  }finally{
+    button.disabled=false;
+  }
 }
+
 function renderDistResult(){
   const tb=document.querySelector('#distResultTbl tbody');const tf=document.querySelector('#distResultTbl tfoot');
   if(lastDistResult.length===0){
