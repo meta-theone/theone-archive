@@ -1,0 +1,41 @@
+.settlement-guide {
+  margin: 0 0 14px;
+  padding: 11px 14px;
+  border: 1px solid #a7dbcb;
+  border-radius: 12px;
+  background: #effbf6;
+  color: #183e33;
+  font-size: 14px;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+.settlement-guide summary {
+  cursor: pointer;
+  font-weight: 750;
+}
+.settlement-guide p {
+  margin: 7px 0 0;
+}
+.settlement-guide .btn {
+  margin-top: 9px;
+  max-width: 100%;
+  white-space: normal;
+}
+.settlement-chart-card {
+  min-width: 0;
+}
+.settlement-chart-frame {
+  position: relative;
+  width: 100%;
+  height: clamp(190px, 28vw, 255px);
+  overflow: hidden;
+}
+.settlement-chart-empty {
+  margin: 0;
+  min-height: 70px;
+  padding: 20px 0;
+  color: #4b5868;
+}
+.settlement-chart-frame[hidden], .settlement-chart-empty[hidden] {
+  display: none;
+}

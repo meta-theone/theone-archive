@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
+<link rel="stylesheet" href="./settlement-guide.css?v=20261127">
+<script src="./settlement-guide.js?v=20261127"></script>
 <script src="./distribution-client.js?v=1"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -165,6 +167,11 @@ tr.totalrow td{background:#fff8e5;font-weight:900;color:var(--navy)}
   <main>
     <!-- ===== HOME ===== -->
     <section class="page active" id="page-home">
+        <details class="settlement-guide">
+          <summary>시작 순서</summary>
+          <p>조직도 → CA 마스터 → 수수료 규칙 → 원장 가져오기 → 자동 분배 순서로 진행하세요. 조직관리비와 쉐어·공제·환수는 해당 사항이 있을 때 등록하세요.</p>
+          <p>차트는 가져온 원장의 지급예상액을 보여줍니다. 이번 달 분배 금액은 이번 달로 실행한 마지막 결과에서 가져옵니다.</p>
+        </details>
       <div class="banner">
         <b>🆕 v2.3-beta — MYGA 33단계 분석 결과 통합</b><br>
         ① v2.3-alpha 기능 유지 (조직 7단계·보험사 14개·납입구분 9종·원장 17컬럼·환수자동) <b>+ NEW ↓</b><br>
@@ -181,8 +188,14 @@ tr.totalrow td{background:#fff8e5;font-weight:900;color:var(--navy)}
         </div>
       </div>
       <div class="grid grid-2">
-        <div class="card"><h2>월별 지급예상액 추이</h2><canvas id="chartTrend" height="180"></canvas></div>
-        <div class="card"><h2>보험사별 분포</h2><canvas id="chartVendor" height="180"></canvas></div>
+        <div class="card settlement-chart-card"><h2>월별 지급예상액 추이</h2>
+          <div class="settlement-chart-frame" id="chartTrendFrame" hidden><canvas id="chartTrend" role="img" aria-label="월별 지급예상액 추이"></canvas></div>
+          <p class="settlement-chart-empty" id="chartTrendEmpty" role="status"></p>
+        </div>
+        <div class="card settlement-chart-card"><h2>보험사별 분포</h2>
+          <div class="settlement-chart-frame" id="chartVendorFrame" hidden><canvas id="chartVendor" role="img" aria-label="보험사별 분포"></canvas></div>
+          <p class="settlement-chart-empty" id="chartVendorEmpty" role="status"></p>
+        </div>
       </div>
       <div class="card">
         <h2>다음 할 일 ✅</h2>
@@ -192,6 +205,12 @@ tr.totalrow td{background:#fff8e5;font-weight:900;color:var(--navy)}
 
     <!-- ===== ORG ===== -->
     <section class="page" id="page-org">
+        <details class="settlement-guide" open>
+          <summary>조직도 입력과 엑셀 양식</summary>
+          <p>직접 추가하거나 양식의 첫 시트에 조직명, 계층(0 본사 / 1 상위본부 / 2 본부 / 3 사업단 / 4 지점 / 5 팀), 코드(선택)를 입력하세요.</p>
+          <p>엑셀로 가져온 조직의 상위 조직은 등록 후 각 조직의 편집 화면에서 지정하세요. 같은 팀명은 피하세요.</p>
+          <button class="btn sm" type="button" onclick="SettlementGuide.downloadTemplate('org')">엑셀 양식 받기</button>
+        </details>
       <div class="card">
         <h2>조직도 6단계 트리 <span class="sub">사업단 → 본부 → 지점 → 센터 → 팀 → CA</span></h2>
         <div class="row" style="margin-bottom:12px">
@@ -217,6 +236,12 @@ tr.totalrow td{background:#fff8e5;font-weight:900;color:var(--navy)}
 
     <!-- ===== AGENTS ===== -->
     <section class="page" id="page-agents">
+        <details class="settlement-guide" open>
+          <summary>CA 마스터 입력과 엑셀 양식</summary>
+          <p>양식의 첫 시트에 이름을 적고, 원장에 코드가 있다면 같은 MT코드를 입력하세요. 앞자리가 0인 코드는 엑셀에서 텍스트로 입력하세요.</p>
+          <p>직급은 수수료 규칙과 동일하게, 팀명은 조직도에 등록한 팀과 동일하게 입력하세요. 위촉일과 상태는 선택입니다. 상태는 active(정상) 또는 inactive(정지)를 입력하세요.</p>
+          <button class="btn sm" type="button" onclick="SettlementGuide.downloadTemplate('agents')">엑셀 양식 받기</button>
+        </details>
       <div class="card">
         <h2>CA 마스터 <span class="sub">4,500명 ~ 2만명 대응 · 월별 직급 이력 지원</span></h2>
         <div class="row" style="margin-bottom:12px">
@@ -229,7 +254,6 @@ tr.totalrow td{background:#fff8e5;font-weight:900;color:var(--navy)}
           <input type="file" id="agImport" accept=".xlsx,.xls" hidden onchange="importAgentsXlsx(event)">
           <span class="badge gold" id="agCntBadge">0명</span>
         </div>
-        <div class="muted" style="margin-bottom:10px">💡 xlsx 컬럼: <b>이름, MT코드, 팀명(또는 팀ID), 직급, 위촉일, 상태</b> · 메타리치 표준 직급: CA1·CA2·SCA·MCA·팀장·지점·S지점·본부</div>
         <div class="tbl-wrap">
           <table>
             <thead><tr>
@@ -243,11 +267,14 @@ tr.totalrow td{background:#fff8e5;font-weight:900;color:var(--navy)}
 
     <!-- ===== RULES ===== -->
     <section class="page" id="page-rules">
+        <details class="settlement-guide" open>
+          <summary>수수료 규칙 입력</summary>
+          <p>이 화면에서 직급명과 기본 분배율을 먼저 등록하세요. 이어 필요한 직급의 상품유형별, 회차별 또는 개인별 예외를 추가할 수 있습니다.</p>
+          <p>CA 마스터와 직급명이 같아야 적용됩니다. 메타리치 표준 자동 시드는 내부 기준과 대조한 뒤 사용하세요.</p>
+        </details>
       <div class="card">
         <h2>수수료 분배 규칙 <span class="sub">직급별 + 상품유형별 + 건당한도 + 회차별</span></h2>
         <div class="banner blue">
-          <b>📐 v2.1 분배 공식</b><br>
-
           ※ 분배율 우선순위: ① 개인 오버라이드 ② 직급×상품유형 ③ 직급 기본
         </div>
 
@@ -344,6 +371,11 @@ tr.totalrow td{background:#fff8e5;font-weight:900;color:var(--navy)}
 
     <!-- ===== MGMT (조직관리비) ===== -->
     <section class="page" id="page-mgmt">
+        <details class="settlement-guide" open>
+          <summary>조직관리비 규칙 입력</summary>
+          <p>보험사, 상품유형, 기준 금액(월보험료·환산보험료·지급예상액), 지급률을 입력하세요. 건당 한도와 적용 직급은 필요할 때 지정하세요.</p>
+          <p>조직도의 상위 조직과 리더 배정, CA의 팀 연결을 먼저 확인하세요.</p>
+        </details>
       <div class="card">
         <h2>조직관리비 (익월 시상) <span class="sub">보험사별·상품유형별 계산식</span></h2>
         <div class="banner">
@@ -370,6 +402,12 @@ tr.totalrow td{background:#fff8e5;font-weight:900;color:var(--navy)}
 
     <!-- ===== LEDGER ===== -->
     <section class="page" id="page-ledger">
+        <details class="settlement-guide" open>
+          <summary>보험사 원장 업로드와 엑셀 양식</summary>
+          <p>정산월과 보험사를 확인한 뒤 .xlsx 또는 .xls를 선택하세요. 여러 파일을 선택할 수 있고 각 시트의 첫 행을 제목으로 읽습니다.</p>
+          <p>설계자명 또는 모집인코드로 CA를 찾습니다. 증권번호, 상품명, 보험료, 지급예상액 또는 GA수수료, 회차, 납입구분을 양식에 맞춰 입력하세요. 양식의 예시 행을 지운 뒤 사용하세요.</p>
+          <button class="btn sm" type="button" onclick="SettlementGuide.downloadTemplate('ledger')">엑셀 양식 받기</button>
+        </details>
       <div class="card">
         <h2>보험사 원장 가져오기 <span class="sub">자동 인식 + 상품유형/회차 추정</span></h2>
         <div class="grid grid-3" style="margin-bottom:14px">
@@ -415,6 +453,11 @@ tr.totalrow td{background:#fff8e5;font-weight:900;color:var(--navy)}
 
     <!-- ===== ADJUST (쉐어·공제·환수) ===== -->
     <section class="page" id="page-adjust">
+        <details class="settlement-guide" open>
+          <summary>쉐어·공제·환수 입력</summary>
+          <p>쉐어는 정산월·증권번호를 원장과 맞추고 참여자 비율의 합을 100%로 입력하세요. 같은 월의 같은 증권번호는 한 건만 등록하세요. 공제는 적용월과 차감·지급 대상자, 양수 금액, 사유를 등록하세요.</p>
+          <p>환수는 적용월·설계사·금액을 선택하세요. 이미 반영한 환수는 상태를 확인한 뒤 저장하세요.</p>
+        </details>
       <div class="card">
         <h2>쉐어·공제·환수 통합 관리 <span class="sub">자동 분배 결과에 추가 반영</span></h2>
         <div class="subtabs">
@@ -486,6 +529,11 @@ tr.totalrow td{background:#fff8e5;font-weight:900;color:var(--navy)}
 
     <!-- ===== DIST ===== -->
     <section class="page" id="page-dist">
+        <details class="settlement-guide" open>
+          <summary>자동 분배 실행</summary>
+          <p>정산월과 보험사를 선택한 뒤 자동 분배를 실행하세요. 결과에서 미매칭 건수를 보세요. 미매칭이 있다면 원장의 모집인코드·이름과 CA 마스터를 대조한 뒤 다시 실행하세요.</p>
+          <p>실행한 결과는 화면에서 보거나 엑셀로 저장할 수 있습니다.</p>
+        </details>
       <div class="card">
         <h2>자동 분배 실행 <span class="sub">원장 + 모든 규칙·조정 통합 계산</span></h2>
         <div class="grid grid-3" style="margin-bottom:14px">
@@ -535,10 +583,15 @@ tr.totalrow td{background:#fff8e5;font-weight:900;color:var(--navy)}
 
     <!-- ===== ORG DASH ===== -->
     <section class="page" id="page-orgDash">
+        <details class="settlement-guide" open>
+          <summary>조직별 집계 조회</summary>
+          <p>자동 분배를 먼저 실행한 뒤 조회할 조직을 선택하세요. 최근 계산한 결과에 연결된 CA와 조직 리더를 집계합니다.</p>
+          <p>다른 월을 보려면 해당 월을 선택해 자동 분배를 실행하세요.</p>
+        </details>
       <div class="card">
         <h2>조직별 대시보드</h2>
         <div class="row" style="margin-bottom:14px">
-          <div><label class="lab">정산월</label><input class="input" type="month" id="orgDashMonth"></div>
+          <div><label class="lab">정산월</label><input class="input" type="month" id="orgDashMonth" onchange="renderOrgDash()"></div>
           <div><label class="lab">조직 선택</label><select class="select" id="orgDashOrg" onchange="renderOrgDash()" style="min-width:240px"></select></div>
           <button class="btn" onclick="renderOrgDash()">조회</button>
         </div>
@@ -548,10 +601,15 @@ tr.totalrow td{background:#fff8e5;font-weight:900;color:var(--navy)}
 
     <!-- ===== PAYSLIP ===== -->
     <section class="page" id="page-payslip">
+        <details class="settlement-guide" open>
+          <summary>지급명세서 조회</summary>
+          <p>자동 분배를 먼저 실행한 뒤 대상 CA를 선택하세요. 출력 전 지급 항목과 공제·환수를 분배 결과와 대조하세요.</p>
+          <p>다른 월을 보려면 해당 월을 선택해 자동 분배를 실행하세요.</p>
+        </details>
       <div class="card">
         <h2>CA 개별 명세서 <span class="sub">카톡/PDF 배포용</span></h2>
         <div class="row" style="margin-bottom:14px">
-          <div><label class="lab">정산월</label><input class="input" type="month" id="paySlipMonth"></div>
+          <div><label class="lab">정산월</label><input class="input" type="month" id="paySlipMonth" onchange="renderPaySlip()"></div>
           <div><label class="lab">설계사</label><select class="select" id="paySlipAgent" onchange="renderPaySlip()" style="min-width:240px"></select></div>
           <button class="btn gold" onclick="window.print()">🖨️ 인쇄/PDF</button>
           <button class="btn" onclick="copyPaySlipKakao()">📋 카톡용 복사</button>
@@ -754,6 +812,7 @@ let editingOrgId=null, editingAgentId=null, editingShareId=null;
 let selectedOrgId=null;
 let trendChart=null, vendorChart=null;
 let lastDistResult = [];
+let lastDistMonth = '';
 
 // v2.3: 메타리치 본사 7단계 조직 (센터 제거 + 상위본부 추가 + 사업단 본부 산하로)
 const LEVEL_NAME = {0:'본사',1:'상위본부',2:'본부',3:'사업단',4:'지점',5:'팀'};
@@ -967,33 +1026,79 @@ document.addEventListener('click', e=>{
 });
 
 /* ===== HOME ===== */
+function renderHomeChart(id, chart, entries, config, emptyMessage) {
+  if (chart) chart.destroy();
+  const frame = document.getElementById(id+'Frame');
+  const status = document.getElementById(id+'Empty');
+  frame.hidden = true;
+  status.hidden = false;
+  if (!entries.length) {
+    status.textContent = emptyMessage;
+    return null;
+  }
+  if (typeof Chart !== 'undefined') {
+    frame.hidden = false;
+    try {
+      const updated = new Chart(document.getElementById(id), config);
+      status.hidden = true;
+      return updated;
+    } catch {
+      Chart.getChart(id)?.destroy();
+      frame.hidden = true;
+    }
+  }
+  status.textContent = '차트를 표시하지 못했습니다. ' + entries.map(([name, total]) => name+' '+fmtMoney(total)).join(' · ');
+  return null;
+}
+
 function renderHome(){
   const m = curMonth();
   document.getElementById('homeMonthLabel').textContent = m;
   const mLeds = CACHE.ledgers.filter(l=>l.month===m);
   document.getElementById('kpiLedgerCnt').textContent = mLeds.reduce((s,l)=>s+(l.rowCount||0),0).toLocaleString()+'건';
-  const com = lastDistResult.filter(r=>r.category==='commission').reduce((s,r)=>s+r.amount,0);
-  const mgmt = lastDistResult.filter(r=>r.category==='mgmt_fee').reduce((s,r)=>s+r.amount,0);
-  const claw = lastDistResult.filter(r=>r.category==='claw_back').reduce((s,r)=>s+r.amount,0);
+  const currentResult = lastDistMonth===m ? lastDistResult : [];
+  const com = currentResult.filter(r=>r.category==='commission').reduce((s,r)=>s+r.amount,0);
+  const mgmt = currentResult.filter(r=>r.category==='mgmt_fee').reduce((s,r)=>s+r.amount,0);
+  const claw = currentResult.filter(r=>r.category==='claw_back').reduce((s,r)=>s+r.amount,0);
   document.getElementById('kpiCom').textContent = fmtMoney(com);
   document.getElementById('kpiMgmt').textContent = fmtMoney(mgmt);
   document.getElementById('kpiClaw').textContent = fmtMoney(Math.abs(claw));
 
-  // 추세
-  const months=[];const d=new Date();d.setDate(1);
-  for(let i=5;i>=0;i--){const dd=new Date(d.getFullYear(),d.getMonth()-i,1);months.push(dd.getFullYear()+'-'+String(dd.getMonth()+1).padStart(2,'0'))}
-  const trendData = months.map(mm=>CACHE.ledgers.filter(l=>l.month===mm).reduce((s,l)=>s+(l.totalPay||0),0));
-  if(trendChart) trendChart.destroy();
-  trendChart = new Chart(document.getElementById('chartTrend'),{
-    type:'bar',data:{labels:months,datasets:[{label:'지급예상액',data:trendData,backgroundColor:'#c8a85a',borderRadius:8}]},
-    options:{plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>fmtNum(v)}}},responsive:true,maintainAspectRatio:false}
-  });
-  const va={};mLeds.forEach(l=>{va[l.vendor]=(va[l.vendor]||0)+(l.totalPay||0)});
-  if(vendorChart) vendorChart.destroy();
-  vendorChart = new Chart(document.getElementById('chartVendor'),{
-    type:'doughnut',data:{labels:Object.keys(va),datasets:[{data:Object.values(va),backgroundColor:['#1d4ed8','#c2410c','#92400e','#b91c1c','#9d174d','#3730a3','#374151','#166534','#0891b2','#7c3aed','#15803d','#ea580c']}]},
-    options:{plugins:{legend:{position:'right',labels:{font:{size:11}}}},responsive:true,maintainAspectRatio:false}
-  });
+
+  const months = [];
+  const d = new Date();
+  for (let i = 5; i >= 0; i--) {
+    const day = new Date(d.getFullYear(), d.getMonth()-i, 1);
+    months.push(day.getFullYear()+'-'+String(day.getMonth()+1).padStart(2,'0'));
+  }
+  const byMonth = new Map();
+  for (const ledger of CACHE.ledgers) {
+    if (ledger.rowCount === 0 || !months.includes(ledger.month)) continue;
+    byMonth.set(ledger.month, (byMonth.get(ledger.month) || 0) + SettlementGuide.amount(ledger.totalPay));
+  }
+  trendChart = renderHomeChart('chartTrend', trendChart, [...byMonth], {
+    type:'bar',
+    data:{labels:months, datasets:[{label:'지급예상액', data:months.map(month=>byMonth.get(month) ?? null),
+      backgroundColor:'#c8a85a', borderRadius:8}]},
+    options:{plugins:{legend:{display:false}}, scales:{y:{ticks:{callback:v=>fmtNum(v)}}}, responsive:true, maintainAspectRatio:false}
+  }, '최근 6개월 원장이 없습니다. 원장 가져오기에서 정산월을 선택하고 엑셀을 올려 주세요.');
+
+  const byVendor = new Map();
+  for (const ledger of mLeds) {
+    if (ledger.rowCount === 0) continue;
+    const entries = ledger.vendorTotals || [[ledger.vendor || '기타', ledger.totalPay]];
+    for (const [vendor, amount] of entries) {
+      byVendor.set(vendor, (byVendor.get(vendor) || 0) + SettlementGuide.amount(amount));
+    }
+  }
+  const vendorTotals = [...byVendor];
+  const hasAmount = vendorTotals.some(([, amount])=>amount !== 0);
+  vendorChart = renderHomeChart('chartVendor', vendorChart, hasAmount ? vendorTotals : [], {
+    type:'doughnut',
+    data:{labels:vendorTotals.map(([vendor])=>vendor), datasets:[{data:vendorTotals.map(([, amount])=>amount),
+      backgroundColor:['#1d4ed8','#c2410c','#92400e','#b91c1c','#9d174d','#3730a3','#374151','#166534','#0891b2','#7c3aed','#15803d','#ea580c']}]},
+    options:{plugins:{legend:{position:'right', labels:{font:{size:11}}}}, responsive:true, maintainAspectRatio:false}
+  }, vendorTotals.length ? '이번 달 원장의 보험사별 지급예상액은 모두 0원입니다.' : '이번 달 보험사 원장이 없습니다.');
 
   const todos=[];
   if(CACHE.orgs.length===0) todos.push({txt:'1️⃣ 조직도 등록 (데모 자동생성 추천)',tab:'org'});
@@ -1124,21 +1229,39 @@ async function seedDemoOrg(){
   toast(`메타리치 7단계 ${news.length}개 생성 (본사1·상위본부2·본부4·사업단8·지점24·팀48)`,'gold');
 }
 async function importOrgXlsx(ev){
-  const f=ev.target.files[0];if(!f)return;
-  const rd=new FileReader();
-  rd.onload=async e=>{
-    const wb=XLSX.read(e.target.result,{type:'array'});
-    const rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{defval:''});
-    const news=[];
-    rows.forEach(r=>{
-      const name=r['조직명']||r['name'];const lvl=parseInt(r['계층']||r['level']);
-      if(!name||!lvl)return;
-      news.push({id:uid(),name:String(name).trim(),level:lvl,parentId:null,code:r['코드']||'',leaderId:null});
-    });
-    CACHE.orgs.push(...news);await dbBulkPut('orgs',news);
-    renderOrgTree();updateHeader();toast(`${news.length}개 등록`,'gold');
-  };
-  rd.readAsArrayBuffer(f);ev.target.value='';
+  const input = ev.target;
+  const file = input.files[0];
+  if (!file || input.disabled) return;
+  input.disabled = true;
+  try {
+    const wb = await SettlementGuide.readWorkbook(file);
+    const rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], {defval:'', raw:false});
+    const news = [];
+    const codes = new Set(CACHE.orgs.map(org=>String(org.code || '').trim()));
+    const names = new Set(CACHE.orgs.map(org=>JSON.stringify([org.name, org.level])));
+    for (const row of rows) {
+      const name = String(row['조직명'] || row['name'] || '').trim();
+      const level = String(row['계층'] || row['level'] || '').trim();
+      const code = String(row['코드'] || '').trim();
+      if (!name || !/^[0-5]$/.test(level)) continue;
+      const identity = JSON.stringify([name, Number(level)]);
+      if ((code && codes.has(code)) || (!code && names.has(identity))) continue;
+      names.add(identity);
+      news.push({id:uid(), name, level:Number(level), parentId:null, code, leaderId:null});
+      if (code) codes.add(code);
+    }
+    if (!news.length) throw new Error('등록할 조직이 없습니다. 첫 시트의 조직명·계층(0~5)과 중복 코드를 확인해 주세요.');
+    await dbBulkPut('orgs', news);
+    CACHE.orgs.push(...news);
+    renderOrgTree();
+    updateHeader();
+    toast(`조직 ${news.length}개 등록 · 제외 ${rows.length-news.length}개`, 'gold');
+  } catch (error) {
+    toast(error instanceof Error ? error.message : '조직을 저장하지 못했습니다. 다시 시도해 주세요.', 'red');
+  } finally {
+    input.value = '';
+    input.disabled = false;
+  }
 }
 
 /* ===== AGENTS ===== */
@@ -1230,28 +1353,45 @@ async function deleteAgent(id){
   renderAgents();updateHeader();toast('삭제','red');
 }
 async function importAgentsXlsx(ev){
-  const f=ev.target.files[0];if(!f)return;
-  const rd=new FileReader();
-  rd.onload=async e=>{
-    const wb=XLSX.read(e.target.result,{type:'array'});
-    const rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{defval:''});
-    const news=[];let hits=0,misses=0;
-    rows.forEach(r=>{
-      const name=r['이름']||r['성명']||r['name'];if(!name)return;
-      const mtCode=String(r['MT코드']||r['코드']||r['code']||'').trim();
-      if(CACHE.agents.find(a=>a.name===name&&a.mtCode===mtCode))return;
-      const teamName=String(r['팀명']||r['팀']||r['team']||'').trim();
-      const teamId=r['팀ID']||(teamName?(CACHE.orgs.find(o=>o.name===teamName&&o.level===5)?.id):null);
-      if(teamName)teamId?hits++:misses++;
-      news.push({id:uid(),name:String(name).trim(),mtCode,
-        grade:String(r['직급']||r['계급']||r['grade']||'').trim(),teamId:teamId||null,
-        joinedAt:r['위촉일']||'',status:r['상태']||'active'});
-    });
-    CACHE.agents.push(...news);await dbBulkPut('agents',news);
-    renderAgents();updateHeader();
-    toast(`${news.length}명 등록 · 팀매칭 ${hits}/${hits+misses}`,'gold');
-  };
-  rd.readAsArrayBuffer(f);ev.target.value='';
+  const input = ev.target;
+  const file = input.files[0];
+  if (!file || input.disabled) return;
+  input.disabled = true;
+  try {
+    const wb = await SettlementGuide.readWorkbook(file);
+    const rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], {defval:'', raw:false, dateNF:'yyyy-mm-dd'});
+    const news = [];
+    let linked = 0;
+    let unlinked = 0;
+    const keys = new Set(CACHE.agents.map(a=>JSON.stringify([a.name, a.mtCode || ''])));
+    for (const row of rows) {
+      const name = String(row['이름'] || row['성명'] || row['name'] || '').trim();
+      const mtCode = String(row['MT코드'] || row['코드'] || row['code'] || '').trim();
+      const key = JSON.stringify([name, mtCode]);
+      if (!name || keys.has(key)) continue;
+      const teamName = String(row['팀명'] || row['팀'] || row['team'] || '').trim();
+      const teamId = String(row['팀ID'] || '').trim();
+      const teams = CACHE.orgs.filter(o=>o.level===5 && (teamId ? o.id===teamId : o.name===teamName));
+      if (teamId || teamName) teams.length===1 ? linked++ : unlinked++;
+      const status = String(row['상태'] || '').trim();
+      news.push({id:uid(), name, mtCode,
+        grade:String(row['직급'] || row['계급'] || row['grade'] || '').trim(),
+        teamId:teams.length===1 ? teams[0].id : null, joinedAt:row['위촉일'] || '',
+        status:status==='inactive' || status==='정지' ? 'inactive' : 'active'});
+      keys.add(key);
+    }
+    if (!news.length) throw new Error('등록할 CA가 없습니다. 첫 시트의 이름과 이미 등록한 CA를 확인해 주세요.');
+    await dbBulkPut('agents', news);
+    CACHE.agents.push(...news);
+    renderAgents();
+    updateHeader();
+    toast(`CA ${news.length}명 등록 · 제외 ${rows.length-news.length}명 · 팀 연결 ${linked}명 · 미연결 ${unlinked}명`, 'gold');
+  } catch (error) {
+    toast(error instanceof Error ? error.message : 'CA를 저장하지 못했습니다. 다시 시도해 주세요.', 'red');
+  } finally {
+    input.value = '';
+    input.disabled = false;
+  }
 }
 
 /* ===== RULES ===== */
@@ -1483,120 +1623,141 @@ async function delLedger(id){
 async function clearLedgers(){
   if(!confirm('모든 원장·분배결과 삭제?'))return;
   await dbClear('ledgers');await dbClear('ledger_rows');await dbClear('distributions');
-  CACHE.ledgers=[];lastDistResult=[];
+  CACHE.ledgers=[];lastDistResult=[];lastDistMonth='';
   renderLedgerPage();updateHeader();toast('전체 삭제','red');
 }
 async function importLedger(ev){
-  const files=ev.target.files;if(!files||files.length===0)return;
-  const m=document.getElementById('ledgerMonth').value||curMonth();
-  const vc=document.getElementById('ledgerVendor').value;
-  const pb=document.getElementById('ledgerProgress');
-  const pm=document.getElementById('ledgerProgMsg');const pbar=document.getElementById('ledgerProgBar');
-  pb.style.display='block';let processed=0;
-  for(const f of files){
-    pm.textContent=`처리중: ${f.name} (${processed+1}/${files.length})`;
-    pbar.style.width=((processed/files.length)*100)+'%';
-    await processLedger(f,m,vc);
-    processed++;
+  const input = ev.target;
+  const files = Array.from(input.files || []);
+  if (!files.length || input.disabled) return;
+  const month = document.getElementById('ledgerMonth').value || curMonth();
+  const vendor = document.getElementById('ledgerVendor').value;
+  const progress = document.getElementById('ledgerProgress');
+  const message = document.getElementById('ledgerProgMsg');
+  const bar = document.getElementById('ledgerProgBar');
+  const failures = [];
+  let imported = 0;
+  input.disabled = true;
+  progress.style.display = 'block';
+  try {
+    for (const [index, file] of files.entries()) {
+      message.textContent = `처리 중: ${file.name} (${index+1}/${files.length})`;
+      bar.style.width = (index/files.length*100)+'%';
+      try {
+        await processLedger(file, month, vendor);
+        imported++;
+      } catch (error) {
+        failures.push(file.name+' — '+(error instanceof Error ? error.message : '저장에 실패했습니다.'));
+      }
+    }
+    bar.style.width = '100%';
+    const summary = `등록 ${imported}개 · 실패 ${failures.length}개`;
+    message.textContent = failures.length ? summary+' / '+failures.join(' / ') : summary;
+    renderLedgerPage();
+    updateHeader();
+    toast(summary, failures.length ? 'red' : 'gold');
+  } finally {
+    input.value = '';
+    input.disabled = false;
   }
-  pbar.style.width='100%';pm.textContent=`${files.length}개 완료`;
-  setTimeout(()=>pb.style.display='none',1500);
-  renderLedgerPage();updateHeader();toast(`${files.length}개 파일 처리`,'gold');
-  ev.target.value='';
 }
 async function processLedger(file,month,vc){
-  return new Promise((res,rej)=>{
-    const rd=new FileReader();
-    rd.onload=async e=>{
-      try{
-        const wb=XLSX.read(e.target.result,{type:'array'});
-        const ledgerId=uid();let totalRows=0,totalPay=0;const allRows=[];
-        for(const sn of wb.SheetNames){
-          const sh=wb.Sheets[sn];
-          const rows=XLSX.utils.sheet_to_json(sh,{defval:'',raw:false});
-          if(rows.length===0)continue;
-          const vendor=vc==='auto'?guessVendor(sn):vc;
-          rows.forEach(r=>{
-            const agentName=r['설계자명']||r['설계사명']||r['설계사']||r['모집자명']||r['모집자']||r['모집인']||r['이름']||'';
-            const agentCode=r['모집인코드']||r['설계자코드']||r['설계사코드']||r['MT코드']||r['코드']||'';
-            const contractNo=r['증권번호']||r['보험증권번호']||r['계약번호']||'';
-            const productName=r['상품명']||r['보장명']||'';
-            const productCode=r['상품코드']||'';
-            const premium=parseFloat(r['보험료']||r['월보험료']||r['영업보험료']||r['환산보험료']||r['월납보험료']||0)||0;
-            const convertedPrem=parseFloat(r['환산보험료']||r['월납환산']||0)||premium;
-            const paymentRate=parseFloat(r['지급율']||r['지급률']||0)||0;
-            // v2.3 신규: MYGA 표준 17컬럼 매핑
-            // v2.3-beta: MYGA 수동입력 필드명 자동 매핑 (mprice/tprice/sprice/sfee)
-            const correctedPrem=parseFloat(r['수정보험료']||r['tprice']||0)||0;            // 계속분 변동 시
-            const adjustedPrem=parseFloat(r['조정보험료']||r['보험사수정']||r['sprice']||0)||0; // 보험사 인정
-            const gaCommission=parseFloat(r['GA수수료']||r['ga수수료']||r['sfee']||0)||0;
-            // v2.3-beta: MYGA 수동입력 필드명(mprice·tprice·sprice·sfee·remprice·retprice) 자동 매핑
-            const realPrem=parseFloat(r['실손월납보']||r['실손월납보험료']||r['remprice']||0)||0;
-            const realCorrectedPrem=parseFloat(r['실손수정보']||r['실손수정보험료']||r['retprice']||0)||0;
-            // 지급예상액: GA수수료 우선, 없으면 기존 컬럼
-            const expectedAmount = gaCommission>0 ? gaCommission :
-              parseFloat(r['지급예상액']||r['지급액']||r['수수료']||r['예상수수료']||0)||0;
-            const installCode = String(r['회차']||r['지급회차']||r['납입회차']||'').trim();
-            // 납입구분 9종 자동 검출
-            let contractType = String(r['납입구분']||r['신규환수']||r['상태']||'').trim();
-            if(!CONTRACT_TYPES.includes(contractType)){
-              // 키워드 매핑
-              const t = contractType;
-              if(/초회|신계약|신규/.test(t)) contractType='초회';
-              else if(/계속|유지/.test(t)) contractType='계속';
-              else if(/실효/.test(t)) contractType='실효';
-              else if(/감액/.test(t)) contractType='감액';
-              else if(/해지|해약/.test(t)) contractType='해지';
-              else if(/철회|청철/.test(t)) contractType='철회';
-              else if(/취소/.test(t)) contractType='취소';
-              else if(/부활/.test(t)) contractType='부활';
-              else if(/환급|환수/.test(t)) contractType='환급';
-              else contractType='계속';  // 기본
-            }
-            // 환수 트리거: 실효/해지/철회/취소 → GA수수료 0 처리
-            // v2.3-beta: MYGA 표준 — GA수수료 음수도 환수 표시 (실효/해지/철회/취소 시 -50000 등)
-            const isClawback = CLAW_BACK_TYPES.includes(contractType) || gaCommission < 0;
-            // 회사 코드 자동 추정
-            const vendorCode = (META_VENDOR_CODES.find(v=>v.name===vendor)||{}).code || '';
-            // v2.3-beta: 상품코드 정규화 + 보험사 역추정 (l+회사약어+4자리)
-            const normalizedProductCode = normalizeProductCode(productCode);
-            const parsedProduct = parseProductCode(productCode);
-            const inferredVendor = parsedProduct?.vendor || vendor;
-            // 사용인코드
-            const userCode = String(r['사용인코드']||r['사번']||'').trim();
-            // 영수일·계약일
-            const receiveDate = r['영수일']||'';
-            const contractDate = r['계약일']||r['체결일']||r['가입일']||'';
-            if(!agentName&&!agentCode)return;
-            allRows.push({id:uid(),ledgerId,month,vendor,vendorCode,sheetName:sn,
-              agentName:String(agentName).trim(),agentCode:String(agentCode).trim(),userCode,
-              contractNo:String(contractNo).trim(),productName:String(productName).trim(),
-              productCode:String(productCode).trim(),
-              normalizedProductCode,inferredVendor,  // v2.3-beta: 상품코드 정규화 결과
-              productType:guessProductType(productName),
-              premium,convertedPrem,correctedPrem,adjustedPrem,gaCommission,
-              realPrem,realCorrectedPrem,
-              paymentRate,expectedAmount,
-              installCode,contractType,isClawback,
-              receiveDate,contractDate,
-              finalizeStatus: 1,  // v2.3-beta: MYGA s_insert_check 기본 1=완료
-              installment:guessInstallment(installCode, contractType)});
-            totalRows++;
-            // 환수면 expectedAmount는 0으로 처리되어 totalPay 영향 없음
-            if(!isClawback) totalPay+=expectedAmount;
-          });
-        }
-        if(allRows.length>0)await dbBulkPut('ledger_rows',allRows);
-        const ledger={id:ledgerId,month,vendor:vc==='auto'?guessVendor(file.name):vc,
-          filename:file.name,rowCount:totalRows,totalPay,uploadedAt:new Date().toISOString()};
-        CACHE.ledgers.push(ledger);await dbPut('ledgers',ledger);
-        res();
-      }catch(err){console.error(err);rej(err)}
-    };
-    rd.readAsArrayBuffer(file);
+  const wb = await SettlementGuide.readWorkbook(file);
+  const ledgerId = uid();
+  const allRows = [];
+  let totalPay = 0;
+  const vendorTotals = new Map();
+  for(const sn of wb.SheetNames){
+    const sh=wb.Sheets[sn];
+    const rows=XLSX.utils.sheet_to_json(sh,{defval:'',raw:false});
+    if(rows.length===0)continue;
+    const vendor=vc==='auto' ? (guessVendor(sn, false) || guessVendor(file.name)) : vc;
+    rows.forEach(r=>{
+      const agentName=r['설계자명']||r['설계사명']||r['설계사']||r['모집자명']||r['모집자']||r['모집인']||r['이름']||'';
+      const agentCode=r['모집인코드']||r['설계자코드']||r['설계사코드']||r['MT코드']||r['코드']||'';
+      const contractNo=r['증권번호']||r['보험증권번호']||r['계약번호']||'';
+      const productName=r['상품명']||r['보장명']||'';
+      const productCode=r['상품코드']||'';
+      const premium=SettlementGuide.amount(r['보험료']||r['월보험료']||r['영업보험료']||r['환산보험료']||r['월납보험료']||0);
+      const convertedPrem=SettlementGuide.amount(r['환산보험료']||r['월납환산']||0)||premium;
+      const paymentRate=SettlementGuide.amount(r['지급율']||r['지급률']||0);
+      // v2.3 신규: MYGA 표준 17컬럼 매핑
+      // v2.3-beta: MYGA 수동입력 필드명 자동 매핑 (mprice/tprice/sprice/sfee)
+      const correctedPrem=SettlementGuide.amount(r['수정보험료']||r['tprice']||0);            // 계속분 변동 시
+      const adjustedPrem=SettlementGuide.amount(r['조정보험료']||r['보험사수정']||r['sprice']||0); // 보험사 인정
+      const gaCommission=SettlementGuide.amount(r['GA수수료']||r['ga수수료']||r['sfee']||0);
+      // v2.3-beta: MYGA 수동입력 필드명(mprice·tprice·sprice·sfee·remprice·retprice) 자동 매핑
+      const realPrem=SettlementGuide.amount(r['실손월납보']||r['실손월납보험료']||r['remprice']||0);
+      const realCorrectedPrem=SettlementGuide.amount(r['실손수정보']||r['실손수정보험료']||r['retprice']||0);
+      // 지급예상액: GA수수료 우선, 없으면 기존 컬럼
+      const expectedAmount = gaCommission>0 ? gaCommission :
+        SettlementGuide.amount(r['지급예상액']||r['지급액']||r['수수료']||r['예상수수료']||0);
+      const installCode = String(r['회차']||r['지급회차']||r['납입회차']||'').trim();
+      // 납입구분 9종 자동 검출
+      let contractType = String(r['납입구분']||r['신규환수']||r['상태']||'').trim();
+      if(!CONTRACT_TYPES.includes(contractType)){
+        // 키워드 매핑
+        const t = contractType;
+        if(/초회|신계약|신규/.test(t)) contractType='초회';
+        else if(/계속|유지/.test(t)) contractType='계속';
+        else if(/실효/.test(t)) contractType='실효';
+        else if(/감액/.test(t)) contractType='감액';
+        else if(/해지|해약/.test(t)) contractType='해지';
+        else if(/철회|청철/.test(t)) contractType='철회';
+        else if(/취소/.test(t)) contractType='취소';
+        else if(/부활/.test(t)) contractType='부활';
+        else if(/환급|환수/.test(t)) contractType='환급';
+        else contractType='계속';  // 기본
+      }
+      // 환수 트리거: 실효/해지/철회/취소 → GA수수료 0 처리
+      // v2.3-beta: MYGA 표준 — GA수수료 음수도 환수 표시 (실효/해지/철회/취소 시 -50000 등)
+      const isClawback = CLAW_BACK_TYPES.includes(contractType) || gaCommission < 0;
+      // 회사 코드 자동 추정
+      const vendorCode = (META_VENDOR_CODES.find(v=>v.name===vendor)||{}).code || '';
+      // v2.3-beta: 상품코드 정규화 + 보험사 역추정 (l+회사약어+4자리)
+      const normalizedProductCode = normalizeProductCode(productCode);
+      const parsedProduct = parseProductCode(productCode);
+      const inferredVendor = parsedProduct?.vendor || vendor;
+      // 사용인코드
+      const userCode = String(r['사용인코드']||r['사번']||'').trim();
+      // 영수일·계약일
+      const receiveDate = r['영수일']||'';
+      const contractDate = r['계약일']||r['체결일']||r['가입일']||'';
+      if(!String(agentName).trim()&&!String(agentCode).trim())return;
+      allRows.push({id:uid(),ledgerId,month,vendor,vendorCode,sheetName:sn,
+        agentName:String(agentName).trim(),agentCode:String(agentCode).trim(),userCode,
+        contractNo:String(contractNo).trim(),productName:String(productName).trim(),
+        productCode:String(productCode).trim(),
+        normalizedProductCode,inferredVendor,  // v2.3-beta: 상품코드 정규화 결과
+        productType:guessProductType(productName),
+        premium,convertedPrem,correctedPrem,adjustedPrem,gaCommission,
+        realPrem,realCorrectedPrem,
+        paymentRate,expectedAmount,
+        installCode,contractType,isClawback,
+        receiveDate,contractDate,
+        finalizeStatus: 1,  // v2.3-beta: MYGA s_insert_check 기본 1=완료
+        installment:guessInstallment(installCode, contractType)});
+        // 환수면 expectedAmount는 0으로 처리되어 totalPay 영향 없음
+      const payment = isClawback ? 0 : expectedAmount;
+    totalPay += payment;
+    vendorTotals.set(vendor, (vendorTotals.get(vendor) || 0) + payment);
+    });
+  }
+  if (!allRows.length) throw new Error('읽을 원장 행이 없습니다. 첫 행의 제목과 설계자명 또는 모집인코드를 확인해 주세요.');
+  const vendors = [...vendorTotals];
+  const ledger = {id:ledgerId, month, vendor:vendors.length===1 ? vendors[0][0] : '복수 보험사',
+    vendorTotals:vendors, filename:file.name, rowCount:allRows.length, totalPay, uploadedAt:new Date().toISOString()};
+  await new Promise((resolve, reject)=>{
+    const transaction = db.transaction(['ledgers','ledger_rows'], 'readwrite');
+    transaction.oncomplete = resolve;
+    transaction.onabort = ()=>reject(transaction.error);
+    transaction.objectStore('ledgers').put(ledger);
+    const rows = transaction.objectStore('ledger_rows');
+    allRows.forEach(row=>rows.put(row));
   });
+  CACHE.ledgers.push(ledger);
 }
-function guessVendor(t){
+function guessVendor(t, fallback = true){
   const s=String(t).toUpperCase();
   if(s.includes('DB'))return'DB손보';if(s.includes('KB'))return'KB손보';
   if(s.includes('AIG'))return'AIG손보';if(s.includes('MG'))return'MG손보';
@@ -1611,7 +1772,7 @@ function guessVendor(t){
   if(s.includes('현대'))return'현대해상';
   if(s.includes('하나'))return'하나손보';
   if(s.includes('라이나'))return'라이나';
-  return t.toString().split(/[\s_]/)[0].slice(0,12)||'기타';
+  return fallback ? (t.toString().replace(/\.[^.]+$/, '').split(/[\s_]/)[0].slice(0,12) || '기타') : '';
 }
 function guessProductType(name){
   const s = String(name||'');
@@ -1707,16 +1868,23 @@ async function saveShare(){
   const vendor=document.getElementById('shVendor').value;
   const month=document.getElementById('shMonth').value;
   const note=document.getElementById('shNote').value;
-  if(!contractNo){toast('증권번호 필수','red');return}
-  const parts=[];
-  document.querySelectorAll('#shareParticipants > .row').forEach(row=>{
-    const agentId=row.querySelector('[data-shp-agent]').value;
-    const ratio=parseFloat(row.querySelector('[data-shp-ratio]').value);
-    if(agentId&&!isNaN(ratio))parts.push({agentId,ratio});
-  });
-  if(parts.length===0){toast('참여자 1명 이상','red');return}
-  const sum=parts.reduce((s,p)=>s+p.ratio,0);
-  if(Math.abs(sum-100)>0.01) if(!confirm(`참여자 비율 합이 ${sum}% 입니다. 그대로 저장할까요?`))return;
+  if(!contractNo || !month){toast('증권번호와 적용월을 입력해 주세요.','red');return}
+  const parts = Array.from(document.querySelectorAll('#shareParticipants > .row'), row=>({
+    agentId:row.querySelector('[data-shp-agent]').value,
+    ratio:Number(row.querySelector('[data-shp-ratio]').value)
+  }));
+  if (!parts.length || parts.some(part=>!part.agentId || !Number.isFinite(part.ratio) || part.ratio<=0)) {
+    toast('참여자를 선택하고 비율에 0보다 큰 값을 입력해 주세요.','red');return;
+  }
+  if (new Set(parts.map(part=>part.agentId)).size!==parts.length) {
+    toast('한 사람은 참여자에 한 번만 등록해 주세요.','red');return;
+  }
+  if (Math.abs(parts.reduce((total,part)=>total+part.ratio,0)-100)>0.000001) {
+    toast('참여자 비율의 합을 100%로 맞춰 주세요.','red');return;
+  }
+  if (CACHE.shares.some(share=>share.id!==editingShareId && share.month===month && share.contractNo===contractNo)) {
+    toast('같은 월과 증권번호에 등록한 쉐어가 있습니다. 기존 건을 편집해 주세요.','red');return;
+  }
   const rec={contractNo,vendor,month,note,participants:parts};
   if(editingShareId){
     const s=CACHE.shares.find(x=>x.id===editingShareId);Object.assign(s,rec);await dbPut('shares',s);
@@ -1763,9 +1931,10 @@ async function saveDed(){
     fromAgentId:document.getElementById('dedFrom').value||null,
     toAgentId:document.getElementById('dedTo').value||null,
     reason:document.getElementById('dedReason').value.trim()};
-  if(!rec.month||!rec.amount||!rec.reason){toast('월·금액·사유 필수','red');return}
+  if(!rec.month || !Number.isFinite(rec.amount) || rec.amount<=0 || !rec.reason){toast('적용월, 양수 금액, 사유를 입력해 주세요.','red');return}
   if(!rec.fromAgentId&&!rec.toAgentId){toast('공제자 또는 지급대상자 1명 이상','red');return}
-  CACHE.deductions.push(rec);await dbPut('deductions',rec);renderDeds();closeModal('dedModal');toast('저장','gold');
+  if(rec.fromAgentId && rec.fromAgentId===rec.toAgentId){toast('차감 대상과 지급 대상은 서로 달라야 합니다.','red');return}
+  await dbPut('deductions',rec);CACHE.deductions.push(rec);renderDeds();closeModal('dedModal');toast('저장','gold');
 }
 async function delDed(id){
   if(!confirm('삭제?'))return;
@@ -1812,8 +1981,8 @@ async function saveClaw(){
     amount:+document.getElementById('clawAmount').value||0,
     status:document.getElementById('clawStatus').value,
     note:document.getElementById('clawNote').value};
-  if(!rec.month||!rec.agentId||!rec.amount){toast('월·설계사·금액 필수','red');return}
-  CACHE.clawBacks.push(rec);await dbPut('claw_backs',rec);
+  if(!rec.month || !rec.agentId || !Number.isFinite(rec.amount) || rec.amount<=0){toast('적용월, 설계사, 양수 금액을 입력해 주세요.','red');return}
+  await dbPut('claw_backs',rec);CACHE.clawBacks.push(rec);
   renderClaws();closeModal('clawModal');toast('저장','gold');
 }
 async function delClaw(id){
@@ -1824,8 +1993,11 @@ async function delClaw(id){
 /* ===== DISTRIBUTION ===== */
 function renderDistPage(){
   if(!document.getElementById('distMonth').value)document.getElementById('distMonth').value=curMonth();
-  const vs=[...new Set(CACHE.ledgers.map(l=>l.vendor))].sort();
-  document.getElementById('distVendor').innerHTML='<option value="">전체</option>'+vs.map(v=>`<option value="${v}">${v}</option>`).join('');
+  const vendors = [...new Set(CACHE.ledgers.flatMap(l=>l.vendorTotals?.map(([name])=>name) || [l.vendor]))].sort();
+  const filter = document.getElementById('distVendor');
+  const selected = filter.value;
+  filter.replaceChildren(new Option('전체', ''), ...vendors.map(name=>new Option(name,name)));
+  if (vendors.includes(selected)) filter.value = selected;
   renderDistResult();
 }
 
@@ -1864,11 +2036,10 @@ async function runDistribution(){
     pb.style.display='none';
     return;
   }
+  await dbBulkPut('distributions', [{id:'last', month:m, vendor:v||'전체',
+    calculatedAt:new Date().toISOString(), rowCount:rows.length, unmatched, result}]);
   lastDistResult = result;
-
-  await dbClear('distributions');
-  await dbPut('distributions',{id:'last',month:m,vendor:v||'전체',
-    calculatedAt:new Date().toISOString(),rowCount:rows.length,unmatched,result:lastDistResult});
+  lastDistMonth = m;
 
   pbar.style.width='100%';
   pm.textContent=`완료 — ${rows.length.toLocaleString()}건 / ${lastDistResult.length.toLocaleString()}명 (미매칭 ${unmatched})`;
@@ -1944,7 +2115,7 @@ function exportDistXlsx(){
     sumRows.push([p.name,p.role,Math.round(p.total),Math.round(get('commission')),Math.round(get('mgmt_fee')),Math.round(get('deduction')),Math.round(get('claw_back'))]);
   });
   XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(sumRows),'수령인집계');
-  const m=document.getElementById('distMonth').value||curMonth();
+  const m=lastDistMonth || document.getElementById('distMonth').value || curMonth();
   XLSX.writeFile(wb,`${m.replace('-','')}_수수료자동분배_v2.1.xlsx`);
   toast('xlsx 다운로드','gold');
 }
@@ -1954,12 +2125,17 @@ function renderOrgDashPage(){
   if(!document.getElementById('orgDashMonth').value)document.getElementById('orgDashMonth').value=curMonth();
   const sel=document.getElementById('orgDashOrg');
   sel.innerHTML=CACHE.orgs.sort((a,b)=>a.level-b.level||a.name.localeCompare(b.name)).map(o=>`<option value="${o.id}">[${LEVEL_NAME[o.level]}] ${o.name}</option>`).join('');
-  if(CACHE.orgs.length>0)renderOrgDash();
+  renderOrgDash();
 }
 function renderOrgDash(){
   const orgId=document.getElementById('orgDashOrg').value;
   const org=CACHE.orgs.find(o=>o.id===orgId);
   if(!org){document.getElementById('orgDashContent').innerHTML='<div class="empty">조직 선택</div>';return}
+  const month = document.getElementById('orgDashMonth').value;
+  if (!lastDistResult.length || month!==lastDistMonth) {
+    document.getElementById('orgDashContent').innerHTML='<div class="empty">선택한 월의 자동 분배를 먼저 실행해 주세요.</div>';
+    return;
+  }
   const set=new Set([orgId]);let chg=true;
   while(chg){chg=false;CACHE.orgs.forEach(o=>{if(o.parentId&&set.has(o.parentId)&&!set.has(o.id)){set.add(o.id);chg=true}})}
   const descAgents=CACHE.agents.filter(a=>set.has(a.teamId));
@@ -2005,13 +2181,17 @@ function renderOrgDash(){
 function renderPaySlipPage(){
   if(!document.getElementById('paySlipMonth').value)document.getElementById('paySlipMonth').value=curMonth();
   document.getElementById('paySlipAgent').innerHTML=CACHE.agents.map(a=>`<option value="${a.id}">${a.name} (${a.mtCode||'-'})</option>`).join('');
-  if(CACHE.agents.length>0)renderPaySlip();
+  renderPaySlip();
 }
 function renderPaySlip(){
   const m=document.getElementById('paySlipMonth').value;
   const aid=document.getElementById('paySlipAgent').value;
   const a=CACHE.agents.find(x=>x.id===aid);
   if(!a){document.getElementById('paySlipContent').innerHTML='<div class="empty">CA 선택</div>';return}
+  if (!lastDistResult.length || m!==lastDistMonth) {
+    document.getElementById('paySlipContent').innerHTML='<div class="empty">선택한 월의 자동 분배를 먼저 실행해 주세요.</div>';
+    return;
+  }
   const mine=lastDistResult.filter(r=>r.recipientId===aid);
   const total=mine.reduce((s,r)=>s+r.amount,0);
   const team=a.teamId?CACHE.orgs.find(o=>o.id===a.teamId)?.name:'-';
@@ -2039,6 +2219,9 @@ function copyPaySlipKakao(){
   const aid=document.getElementById('paySlipAgent').value;
   const a=CACHE.agents.find(x=>x.id===aid);if(!a){toast('CA 선택','red');return}
   const m=document.getElementById('paySlipMonth').value;
+  if (!lastDistResult.length || m!==lastDistMonth) {
+    toast('선택한 월의 자동 분배를 먼저 실행해 주세요.','red');return;
+  }
   const mine=lastDistResult.filter(r=>r.recipientId===aid);
   const total=mine.reduce((s,r)=>s+r.amount,0);
   const catLabel={commission:'수수료',mgmt_fee:'조직관리비',share:'쉐어',deduction:'공제',claw_back:'환수'};
@@ -2089,7 +2272,12 @@ async function importBackup(ev){
       if(d.settings)await dbPut('settings',{id:'main',...d.settings});
       if(d.ledger_rows)await dbBulkPut('ledger_rows',d.ledger_rows);
       if(d.distributions)await dbBulkPut('distributions',d.distributions);
-      await loadCache();renderHome();toast('복원 완료','gold');
+      await loadCache();
+      const restored = (await dbAll('distributions')).find(item=>item.id==='last');
+      lastDistResult = restored?.result || [];
+      lastDistMonth = restored?.month || '';
+      renderHome();
+      toast('복원 완료','gold');
     }catch(err){toast('JSON 파싱 실패','red');console.error(err)}
   };
   rd.readAsText(f);ev.target.value='';
@@ -2099,8 +2287,11 @@ async function importBackup(ev){
 async function init(){
   try{
     await openDB();await loadCache();
-    const lastDist=(await dbAll('distributions'))[0];
-    if(lastDist&&lastDist.result)lastDistResult=lastDist.result;
+    const lastDist=(await dbAll('distributions')).find(item=>item.id==='last');
+    if (lastDist && lastDist.result) {
+      lastDistResult = lastDist.result;
+      lastDistMonth = lastDist.month || '';
+    }
     document.getElementById('ledgerMonth').value=curMonth();
     document.getElementById('distMonth').value=curMonth();
     document.getElementById('paySlipMonth').value=curMonth();
